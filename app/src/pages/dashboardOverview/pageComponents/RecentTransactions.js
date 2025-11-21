@@ -1,0 +1,18 @@
+import { SectionHeading, CardsList } from "../Index.js";
+
+const RecentTransactions  = {
+  render() {
+    return `
+      <section class="h-screen w-full pt-[16px] flex flex-col gap-sm  
+                        laptop:h-full laptop:w-2/3 laptop:py-0"
+      >
+          ${SectionHeading.render('Recent Transactions')}
+          <div class="h-full w-full   gradient-secondary rounded-2xl">
+              ${CardsList.render()}
+          </div>
+      </section>
+    `;
+  }
+};
+
+export default RecentTransactions;
