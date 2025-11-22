@@ -6,9 +6,9 @@ export { default as MonthlyComparisonChart } from '../../components/charts/compo
 export { default as SectionHeading } from '../../components/pageTemplate/SectionHeading.js';
 export { default as PageTemplate } from '../../components/pageTemplate/PageTemplate.js';
 
-export { default as CashStatus } from './pageComponents/CashStatus.js';
-export { default as Diagrams } from './pageComponents/Diagrams.js';
-export { default as RecentTransactions } from './pageComponents/RecentTransactions.js';
+export { default as CashStatus } from './dashboardComponents/CashStatus.js';
+export { default as Diagrams } from './dashboardComponents/Diagrams.js';
+export { default as RecentTransactions } from './dashboardComponents/RecentTransactions.js';
 
 
 

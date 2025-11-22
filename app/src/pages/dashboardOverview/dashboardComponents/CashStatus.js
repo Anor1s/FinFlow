@@ -1,4 +1,4 @@
-import {SectionHeading, CardsList} from '../index.js'
+import { SectionHeading, CardsList } from '../index.js'
 
 const CashStatus = {
   render() {

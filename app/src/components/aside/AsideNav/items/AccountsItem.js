@@ -4,7 +4,7 @@ const AccountsItem = {
       <li>
         <a 
           href="${item.href}" 
-          class="laptop:bg-surface gradient-hover hover:bg-transparent 
+          class="laptop:bg-surface radient-hover hover:bg-transparent 
                 group flex items-center laptop:py-[8px] laptop:px-[16px] 
                 rounded-lg pointer
                 gap-sm" data-link
@@ -16,6 +16,7 @@ const AccountsItem = {
             width="45"
             height="45"
             loading="lazy"
+            aria-hidden="true"
           />
           <span 
             class=" group-hover:text-black transition-colors duration-200 

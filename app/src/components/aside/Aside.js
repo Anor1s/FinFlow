@@ -11,7 +11,7 @@ const Aside = {
               tablet:text-base desktop:text-2xl"
         >
         <div 
-          class="flex flex-col justify-between h-full gap-[48px] tablet:gap-[38px] 
+          class="flex flex-col justify-between h-full gap-[40px] tablet:gap-[30px] 
           ">
           ${AsideLogo.render()}
           ${AsideNav.render()}

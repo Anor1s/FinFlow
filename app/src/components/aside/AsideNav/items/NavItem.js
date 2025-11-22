@@ -8,12 +8,13 @@ const NavItem = {
                 gradient-hover laptop:gap-sm desktop:gap-[16px]" data-link
           >
           <img
-            class="group-hover:brightness-0 tablet:w-[32px] tablet:h-[32px] laptop:h-[24px] laptop:w-[24px] transition-colors  duration-200"  data-icon-link
+            class="group-hover:brightness-0 tablet:w-[32px] tablet:h-[32px] laptop:h-[24px] laptop:w-[24px]"  data-icon-link
             src="${item.icon}"
             alt="${item.alt}"
             width="24"
             height="24"
             loading="lazy"
+            aria-hidden="true"
           />
           <span 
             class="group-hover:text-black transition-colors duration-200 
