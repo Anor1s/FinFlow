@@ -1,15 +1,15 @@
-import { PageTemplate, Search, FilterCriteria, SelectButton  } from "./Index.js";
+import { PageTemplate, TransactionFilters, TransactionsSection  } from "./Index.js";
 
 const Transactions = {
   render() {
     return PageTemplate.render([
-      Search.render(),
-      FilterCriteria.render(),
+      TransactionFilters.render(),
+      TransactionsSection.render(),
     ]);
   },
 
   init() {
-    SelectButton.afterRender();
+    TransactionsSection.init();
   }
 };
 

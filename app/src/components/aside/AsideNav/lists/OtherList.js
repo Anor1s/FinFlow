@@ -1,4 +1,4 @@
-import { AsideNavItem, AsideAccountsItem, OtherItemsData, AccountsItemsData  } from '../../Index.js';
+import { AsideNavItem, OtherItemsData } from '../../Index.js';
 
 
 
@@ -11,7 +11,6 @@ const OtherList = {
         <ul class="flex flex-col justify-center items-center 
                    laptop:items-stretch gap-base laptop:w-full">
           ${OtherItemsData.map(item => AsideNavItem.render(item)).join('\n')}
-          ${AccountsItemsData.map(item => AsideAccountsItem.render(item)).join('\n')}
         </ul>
       </div>
     `;
