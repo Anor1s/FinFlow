@@ -1,0 +1,23 @@
+// Category Icons
+export { default as BeautyIcon } from '../../assets/icons/transaction/categories/Beauty.svg'
+export { default as BadHabitsIcon } from '../../assets/icons/transaction/categories/BadHabits.svg'
+export { default as ClothingIcon } from '../../assets/icons/transaction/categories/Clothing.svg'
+export { default as PetsIcon } from '../../assets/icons/transaction/categories/Pets.svg'
+export { default as CommunicationIcon } from '../../assets/icons/transaction/categories/Communication.svg'
+export { default as EducationIcon } from '../../assets/icons/transaction/categories/Education.svg'
+export { default as EntertainmentIcon } from '../../assets/icons/transaction/categories/Entertainment.svg'
+export { default as FinancialIcon } from '../../assets/icons/transaction/categories/Financial.svg'
+export { default as FoodAndDrinksIcon } from '../../assets/icons/transaction/categories/FoodAndDrinks.svg'
+export { default as GiftsCharityIcon } from '../../assets/icons/transaction/categories/GiftsCharity.svg'
+export { default as HouseholdIcon } from '../../assets/icons/transaction/categories/Household.svg'
+export { default as HealthIcon } from '../../assets/icons/transaction/categories/Health.svg'
+export { default as OtherIcon } from '../../assets/icons/transaction/categories/Other.svg'
+export { default as SalaryIcon } from '../../assets/icons/transaction/categories/Salary.svg'
+export { default as SavingsIcon } from '../../assets/icons/transaction/categories/Savings.svg'
+export { default as TransportIcon } from '../../assets/icons/transaction/categories/Transport.svg'
+export { default as TravelIcon } from '../../assets/icons/transaction/categories/Travel.svg'
+export { default as HousingIcon } from '../../assets/icons/transaction/categories/Housing.svg'
+
+// Transaction Type Icons
+export { default as IncomeIcon } from '../../assets/icons/transaction/type/Income.svg'
+export { default as ExpenseIcon } from '../../assets/icons/transaction/type/Expense.svg'

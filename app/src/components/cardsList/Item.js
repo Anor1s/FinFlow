@@ -25,6 +25,7 @@ const Item = {
               height="45"
               width="45"
               loading="lazy"
+              aria-hidden="true"
             />
           </div>
         </div>
