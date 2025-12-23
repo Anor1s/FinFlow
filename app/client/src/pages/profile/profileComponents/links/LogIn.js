@@ -2,9 +2,10 @@ import { LinkButtonCreate, LogInIcon } from "../../index.js";
 
 const ButtonConfig = {
   text: 'Sign in account?',
-  link: '/',
+  link: '#',
   icon: LogInIcon,
   buttonText: 'Log In',
+  id: 'switchToLogin'
 }
 
 const LogInLink = {

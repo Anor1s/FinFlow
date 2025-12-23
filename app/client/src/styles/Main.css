@@ -1,4 +1,4 @@
-@import "../../node_modules/tailwindcss/dist/lib.d.mts";
+@import "tailwindcss";
 
 @theme {
   --breakpoint-mobile: 600px; /* small */
@@ -18,7 +18,7 @@
   --color-text-primary: var(--text-primary);
   --color-text-secondary: var(--text-secondary);
   --color-text-tertiary: var(--text-tertiary);
-  --color-text-error: var(--text-error);
+  --color-text-accent: var(--text-accent);
 
   --color-chart-income-surface: var(--chart-income-surface);
   --color-chart-income-border: var(--chart-income-border);
@@ -70,7 +70,7 @@
     --text-primary:  #353535;
     --text-secondary: #000000;
     --text-tertiary: #1E1E1E;
-    --text-error: #DC2626;
+    --text-accent: #DC2626;
 
     --chart-income-surface: #10B981BF;
     --chart-income-border: #064E3B;
@@ -319,9 +319,8 @@
   }
 
   .error {
-    color: var(--text-error);
+    color: var(--text-accent);
   }
-
 
   .visually-hidden {
     clip: rect(0 0 0 0);
@@ -337,6 +336,11 @@
     grid-column: 1 / -1;
   }
 
-
+  .disabled {
+    pointer-events: none;
+    opacity: 0.6;
+    cursor: not-allowed;
+    user-select: none;
+  }
 }
 

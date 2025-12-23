@@ -13,7 +13,7 @@ const LoginInput = {
         name="username" 
         autocomplete="username" 
       />
-      <div class="text-text-error text-base" id="${inputId}Error"></div>
+      <div class="text-text-accent text-base" id="${inputId}Error"></div>
     `
   }
 };

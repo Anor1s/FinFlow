@@ -2,10 +2,13 @@ import { initRouter, navigateTo } from './router/Router.js';
 import { restoreCSSGradient, restoreTheme } from './components/other/RestoreThemeAndColors.js'
 import Header from './components/Header.js';
 import Aside from './components/aside/Aside.js';
+import AuthService from './services/AuthService.js';
 
-export function initApp() {
+export async function initApp() {
   restoreCSSGradient();
   restoreTheme();
+
+  await AuthService.checkAuth();
 
   renderAppLayout();
   initRouter();

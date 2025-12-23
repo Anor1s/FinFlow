@@ -1,11 +1,12 @@
 const LinkButtonCreate = {
   render(ButtonConfig) {
     return `
-      <div class="w-full text-text-primary flex flex-row gap-sm">
+      <div class="w-full text-text-primary flex flex-row gap-sm justify-center">
         ${ButtonConfig.text}
         <a  
           class="h-full capitalized text-text-tertiary border-b-[2px] "
           href="${ButtonConfig.link}"
+          id="${ButtonConfig.id}"
         > 
          <div class="w-fit flex flex-row gap-sm">
             ${ButtonConfig.buttonText}

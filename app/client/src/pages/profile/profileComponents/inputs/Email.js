@@ -12,7 +12,7 @@ const EmailInput = {
         name="email"
         autocomplete="email"
       />
-      <div class="text-text-error text-base" id="${inputId}Error"></div>
+      <div class="text-text-accent text-base" id="${inputId}Error"></div>
       `
   }
 };

@@ -24,7 +24,7 @@ const RepeatPasswordInput = {
         >
         </button>
       </div>
-     <div class="text-text-error text-base" id="${inputId}Error"></div>
+     <div class="text-text-accent text-base" id="${inputId}Error"></div>
     `
   },
 

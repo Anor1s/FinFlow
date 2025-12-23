@@ -15,17 +15,26 @@ export { default as LogInIcon } from '../../assets/icons/profile/LogIn.svg'
 export { default as LogOutIcon } from '../../assets/icons/profile/LogOut.svg'
 export { default as SignUpIcon } from '../../assets/icons/profile/SignUp.svg'
 
+export { default as DeleteAccountIcon } from '../../assets/icons/profile/DeleteAccount.svg'
+
 // Utilities
 export { Throttle, Debounce } from '../../components/other/Utilities.js'
 
 // Page components
+// Auth
 export { default as Form } from './profileComponents/Form.js'
 export { default as InputWrapper } from './profileComponents/InputWrapper.js'
 export { default as SectionBody } from './profileComponents/SectionBody.js'
 
+// Profile
+export { default as ProfileItems } from './profileComponents/profileSections/items/Items.js'
+
 // Buttons
 export { default as LogInButton } from './profileComponents/buttons/LogIn.js'
 export { default as SignUpButton } from './profileComponents/buttons/SignUp.js'
+
+export { default as LogOutButton } from './profileComponents/profileSections/buttons/LogOut.js'
+export { default as DeleteAccountButton } from './profileComponents/profileSections/buttons/DeleteAccount.js'
 
 // Links
 export { default as LogInLink } from './profileComponents/links/LogIn.js'
@@ -40,3 +49,12 @@ export { default as RepeatPasswordInput } from './profileComponents/inputs/Repea
 // Page sections
 export { default as Login } from './profileComponents/pageSections/Login.js'
 export { default as SignUp } from './profileComponents/pageSections/SignUp.js'
+
+export { default as Accounts } from './Accounts.js'
+
+
+
+export { default as ProfileSection } from './profileComponents/profileSections/ProfileSection.js'
+
+// Auth service
+export { default as AuthService } from '../../services/AuthService.js'

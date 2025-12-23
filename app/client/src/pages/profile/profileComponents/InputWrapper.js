@@ -1,7 +1,7 @@
 const InputWrapper = {
   render(input) {
     return `
-      <div class="flex flex-col gap-sm w-full">
+      <div class="flex flex-col gap-xs w-full">
         ${input}
       </div>
     `

@@ -17,7 +17,7 @@ const AddTransactionButton = {
 
     return`
       <button
-        class="h-full w-full relative text-text-tertiary text-2xl z-30 min-h-[50px] max-h-[80px]
+        class="h-full w-full relative text-text-tertiary text-2xl z-30 min-h-[40px] max-h-[80px]
              gradient-primary transition-all duration-200 ease-in-out
              before:content-[''] before:absolute before:inset-[2px] before:-z-10
              before:bg-background rounded hover:text-text-secondary
@@ -28,6 +28,7 @@ const AddTransactionButton = {
         title="${ButtonConfig.title}"
         data-action="${ButtonConfig.action}"
         role="${buttonType}"
+        id="${ButtonConfig.id}"
       > 
         <div class="flex flex-row justify-center gap-base">
           ${ButtonConfig.text}

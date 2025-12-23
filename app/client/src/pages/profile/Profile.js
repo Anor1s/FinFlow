@@ -1,18 +1,45 @@
-import { PageTemplate, Login, SignUp } from './index.js';
+import { PageTemplate, Accounts, ProfileSection, AuthService } from './index.js';
 
-const Accounts = {
+const Profile = {
   render() {
+    const isAuth = localStorage.getItem('isLoggedIn') === 'true';
+
+    if (!isAuth) {
+      return Accounts.render();
+    }
+
     return PageTemplate.render([
-        Login.render(),
-        SignUp.render(),
-      ])
-    ;
+      `<div id="profile-mount-point" class="w-full">
+         <p class="text-text-primary">Loading profile...</p>
+       </div>`
+    ]);
   },
 
-  init() {
-    Login.init();
-    SignUp.init();
+  async init() {
+    const isAuth = localStorage.getItem('isLoggedIn') === 'true';
+
+    if (!isAuth) {
+      Accounts.init();
+    } else {
+      try {
+        const response = await AuthService.getProfile();
+        const user = response.user;
+
+        const mountPoint = document.getElementById('profile-mount-point');
+
+        if (mountPoint) {
+          mountPoint.innerHTML = ProfileSection.render(user);
+
+          ProfileSection.init();
+        }
+
+      } catch (error) {
+        console.error("Failed to initialize profile:", error.message);
+        localStorage.removeItem('isLoggedIn');
+        window.location.reload();
+      }
+    }
   }
 };
 
-export default Accounts;
+export default Profile;
