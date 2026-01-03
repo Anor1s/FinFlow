@@ -23,12 +23,6 @@ const MenuItemsData = [
     text: 'Add Transaction',
     alt: 'Investments Transaction',
     href: '/add-transaction',
-  },
-  {
-    icon: `${iconsPath}Reports.svg`,
-    text: 'Reports',
-    alt: 'Reports icon',
-    href: '/reports',
   }
 ];
 

@@ -27,7 +27,7 @@ const SearchBar = {
           id="search-button"
         >
           <img
-            class="group-hover:brightness-0 group-hover:invert transition-colors duration-200"
+            class="group-hover:icon-hover icon transition-all duration-200"
             data-icon-link
             src="${SearchIcon}"
             alt="icon"
@@ -58,7 +58,7 @@ const SearchBar = {
           if (window.updateTransactionFilters) {
             window.updateTransactionFilters();
           }
-        }, 300);
+        }, 200);
       });
 
       searchInput.addEventListener('keypress', (e) => {

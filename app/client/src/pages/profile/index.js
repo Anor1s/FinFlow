@@ -19,6 +19,7 @@ export { default as DeleteAccountIcon } from '../../assets/icons/profile/DeleteA
 
 // Utilities
 export { Throttle, Debounce } from '../../components/other/Utilities.js'
+export { default as Dialog }   from '../../components/other/Dialog.js'
 
 // Page components
 // Auth
@@ -36,6 +37,9 @@ export { default as SignUpButton } from './profileComponents/buttons/SignUp.js'
 export { default as LogOutButton } from './profileComponents/profileSections/buttons/LogOut.js'
 export { default as DeleteAccountButton } from './profileComponents/profileSections/buttons/DeleteAccount.js'
 
+// Cache for Logout
+export { default as Cache } from '../../router/Cache.js'
+
 // Links
 export { default as LogInLink } from './profileComponents/links/LogIn.js'
 export { default as SignUpLink } from './profileComponents/links/SignUp.js'
@@ -51,10 +55,9 @@ export { default as Login } from './profileComponents/pageSections/Login.js'
 export { default as SignUp } from './profileComponents/pageSections/SignUp.js'
 
 export { default as Accounts } from './Accounts.js'
-
-
-
 export { default as ProfileSection } from './profileComponents/profileSections/ProfileSection.js'
+
+
 
 // Auth service
 export { default as AuthService } from '../../services/AuthService.js'

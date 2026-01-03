@@ -1,5 +1,5 @@
 {
-  "name": "finflow",
+  "name": "finflow-client",
   "version": "1.0.0",
   "type": "module",
   "scripts": {
@@ -8,12 +8,13 @@
     "preview": "vite preview",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "",
+  "author": "Anor1s",
   "license": "ISC",
-  "description": "",
+  "description": "Modern personal finance management app with multi-currency support and smart analytics.",
   "devDependencies": {
     "@tailwindcss/vite": "^4.1.17",
     "tailwindcss": "^4.1.17",
+    "tailwindcss-animate": "^1.0.7",
     "vite": "^7.2.2"
   },
   "dependencies": {

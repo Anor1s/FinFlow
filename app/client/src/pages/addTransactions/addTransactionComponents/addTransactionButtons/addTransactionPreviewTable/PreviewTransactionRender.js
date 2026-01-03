@@ -13,15 +13,12 @@ const DetailButtonsRender = {
   },
 
   updatePreview() {
-    this.transactionData = DetailButtonsGetData();
-
     const previewElement = document.querySelector('[data-preview-transaction]');
 
-    if (previewElement) {
-      this.updatePreviewElements(previewElement, this.transactionData);
-    } else {
-      console.warn('Preview element not found');
-    }
+    if (!previewElement) return;
+
+    this.transactionData = DetailButtonsGetData();
+    this.updatePreviewElements(previewElement, this.transactionData);
   },
 
   updatePreviewElements(container, data) {
@@ -38,6 +35,7 @@ const DetailButtonsRender = {
     categorySection.innerHTML = `
       ${data.category.icon ?
           `<img 
+            class="icon"
             src="${data.category.icon}" 
             alt="${data.category} icon"
             width="24"
@@ -118,9 +116,7 @@ const DetailButtonsRender = {
   },
 
   initPreviewTransaction() {
-    setTimeout(() => {
-      this.updatePreview();
-    }, 100);
+    this.updatePreview();
 
     document.addEventListener('click', (e) => {
       if (e.target.closest('[data-value]') || e.target.closest('[data-button-id]')) {
@@ -129,14 +125,17 @@ const DetailButtonsRender = {
     });
 
     document.addEventListener('input', (e) => {
-      if (e.target.matches('[data-amount], [data-note]')) {
-        setTimeout(() => this.updatePreview(), 50);
+      const target = e.target;
+
+      if (
+        target.closest('[data-amount]') ||
+        target.closest('[data-note]') ||
+        target.closest('.datetime-input')
+      ) {
+        this.updatePreview();
       }
     });
 
-    document.addEventListener('change', (e) => {
-      setTimeout(() => this.updatePreview(), 50);
-    });
   }
 };
 

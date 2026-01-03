@@ -2,7 +2,7 @@ import { PageTemplate, Accounts, ProfileSection, AuthService } from './index.js'
 
 const Profile = {
   render() {
-    const isAuth = localStorage.getItem('isLoggedIn') === 'true';
+    const isAuth = document.cookie.includes('isLoggedIn=true');
 
     if (!isAuth) {
       return Accounts.render();
@@ -10,13 +10,13 @@ const Profile = {
 
     return PageTemplate.render([
       `<div id="profile-mount-point" class="w-full">
-         <p class="text-text-primary">Loading profile...</p>
+         <p class="text-text-primary text-center p-10">Loading profile...</p>
        </div>`
     ]);
   },
 
   async init() {
-    const isAuth = localStorage.getItem('isLoggedIn') === 'true';
+    const isAuth = document.cookie.includes('isLoggedIn=true');
 
     if (!isAuth) {
       Accounts.init();
@@ -26,16 +26,15 @@ const Profile = {
         const user = response.user;
 
         const mountPoint = document.getElementById('profile-mount-point');
-
         if (mountPoint) {
           mountPoint.innerHTML = ProfileSection.render(user);
-
           ProfileSection.init();
         }
 
       } catch (error) {
-        console.error("Failed to initialize profile:", error.message);
-        localStorage.removeItem('isLoggedIn');
+        console.error("Auth expired or failed:", error.message);
+
+        document.cookie = "isLoggedIn=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
         window.location.reload();
       }
     }

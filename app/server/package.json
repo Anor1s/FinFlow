@@ -6,6 +6,7 @@
     "start": "node Server.js",
     "dev": "node --watch Server1.js"
   },
+  "author": "Anor1s",
   "dependencies": {
     "argon2": "^0.44.0",
     "cookie-parser": "^1.4.7",

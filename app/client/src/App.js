@@ -1,4 +1,4 @@
-import { initRouter, navigateTo } from './router/Router.js';
+import Router from './router/Router.js';
 import { restoreCSSGradient, restoreTheme } from './components/other/RestoreThemeAndColors.js'
 import Header from './components/Header.js';
 import Aside from './components/aside/Aside.js';
@@ -11,13 +11,13 @@ export async function initApp() {
   await AuthService.checkAuth();
 
   renderAppLayout();
-  initRouter();
+  Router.init();
 
   document.addEventListener('click', (e) => {
     if (e.target.matches('[data-link]')) {
       e.preventDefault();
       const href = e.target.getAttribute('href');
-      navigateTo(href);
+      Router.navigateTo(href);
     }
   });
 }

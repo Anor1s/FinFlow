@@ -1,4 +1,4 @@
-import { DateButtonCreate } from "../../../index.js";
+import { DateTimeButtonCreate } from "../../../index.js";
 
 const ButtonConfig = {
   categoryName: "Date & Time From",
@@ -8,15 +8,15 @@ const ButtonConfig = {
 
 const DateTimeFromButton = {
   render() {
-    return DateButtonCreate.render(ButtonConfig)
+    return DateTimeButtonCreate.render(ButtonConfig)
   },
 
   init() {
-    DateButtonCreate.init(ButtonConfig);
+    DateTimeButtonCreate.init(ButtonConfig);
   },
 
   getValues() {
-    return DateButtonCreate.getValues(ButtonConfig.buttonId);
+    return DateTimeButtonCreate.getValues(ButtonConfig.buttonId);
   }
 };
 

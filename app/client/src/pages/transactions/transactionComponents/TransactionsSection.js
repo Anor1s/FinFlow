@@ -1,6 +1,6 @@
 import {
   SectionHeading,
-  TransactionTable,
+  TransactionsTable,
 } from '../index.js';
 
 const TransactionsSection = {
@@ -8,13 +8,13 @@ const TransactionsSection = {
     return `
       <section class="h-full laptop:h-include-top w-full flex flex-col gap-sm"> 
         ${SectionHeading.render('All transactions')}
-        ${TransactionTable.render()}
+        ${TransactionsTable.render()}
       </section>
     `;
   },
 
   init() {
-    TransactionTable.init();
+    TransactionsTable.init();
   }
 };
 

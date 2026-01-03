@@ -16,15 +16,3 @@ const Logo = {
 
 export default Logo;
 
-
-// <img
-//
-//   className="mx-auto  aspect-square gradient "
-//   style=" -webkit-mask: url('${FinFlowIcon}') no-repeat center / contain;
-//           mask: url('${FinFlowIcon}') no-repeat center / contain;"
-//   src="${FinFlowIcon}"
-//   alt="FinFlow"
-//   width="50"
-//   height="50"
-//   loading="lazy"
-// />

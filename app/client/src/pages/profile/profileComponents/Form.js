@@ -3,7 +3,10 @@ import { Debounce, ErrorIcon } from "../index.js";
 const Form = {
   render(formId, formParts) {
     return `
-      <form class="flex flex-col gap-base w-full" id="${formId}">
+      <form 
+        class="flex flex-col gap-base w-full" 
+        id="${formId}"
+      >
          ${formParts.join('\n')}
       </form>
     `

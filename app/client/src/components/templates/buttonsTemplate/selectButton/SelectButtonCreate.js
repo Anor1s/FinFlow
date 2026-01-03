@@ -1,150 +1,127 @@
 import SelectButtonItem from './SelectButtonItem.js';
 
-const SelectButtonCreate = {render(buttonValues, buttonConfig) {
+const SelectButtonCreate = {
+  _isGlobalSetupDone: false,
+
+  render(buttonValues, buttonConfig) {
+    this.setupGlobalListeners();
 
     const optionsWithDefault = [
       { value: '', text: 'Select option' },
       ...buttonValues
     ];
 
-    const html = `
-    <div class="relative w-full flex flex-col gap-xs " id="select-container-${buttonConfig.buttonId}">
-      <span class="text-base">${buttonConfig.categoryName}</span>
-      <button
-        class="group custom-select-button w-full px-[16px] text-left min-h-button  gap-base 
-              bg-surface hover:bg-surface-response active:bg-surface-response rounded 
-              flex justify-between items-center overflow-hidden"
-        aria-haspopup="listbox"
-        aria-expanded="false"
-        data-button-id="${buttonConfig.buttonId}"
+    const currentText = buttonConfig.initialText || 'Select option';
+    const currentValue = buttonConfig.initialValue || '';
+
+    return `
+      <div 
+        class="relative w-full flex flex-col gap-xs" 
+        id="select-container-${buttonConfig.buttonId}"
       >
-        <span 
-          class="selected-value text-text-primary group-hover:text-text-tertiary text-base font-medium
-                 transition-all ease duration-200 overflow-hidden" 
+        <!-- Category name --> 
+        <span class="text-base text-text-primary">${buttonConfig.categoryName}</span>
+        
+        <!-- Select button -->
+        <button
+          class="group custom-select-button w-full px-[16px] text-left min-h-button gap-base 
+                bg-surface hover:bg-surface-response active:bg-surface-response rounded 
+                flex justify-between items-center overflow-hidden transition-color duration-200"
+          data-button-id="${buttonConfig.buttonId}"
+          type="button"
+        >
+          <span 
+            class="selected-value text-text-primary group-hover:text-text-tertiary 
+                      text-base font-medium pointer-events-none" 
+            data-button-id="${buttonConfig.buttonId}"
+          >
+            ${currentText}
+          </span>
+          <svg class="w-5 h-5 text-text-primary duration-200 pointer-events-none transition-transform" 
+               fill="none" stroke="currentColor" viewBox="0 0 24 24" style="transform: rotate(0deg)">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+          </svg>
+        </button>
+        
+        <!-- Slect button options -->
+        <ul 
+          class="dropdown-menu transition-all duration-200 border-b-2 rounded-b-lg 
+                absolute z-50 hidden w-full bg-surface-secondary overflow-y-auto max-h-60 
+                shadow-xl top-full divide-y"
           data-button-id="${buttonConfig.buttonId}"
         >
-          Select option
-        </span>
-
-        <svg 
-          class="w-5 h-5 text-text-primary duration-200 
-                group-hover:text-text-tertiary transition transition-color ease" 
-          fill="none" 
-          stroke="currentColor" 
-          viewBox="0 0 24 24"
-          aria-hidden="true"
+          ${optionsWithDefault.map(item => SelectButtonItem.render(item, buttonConfig.buttonId)).join('\n')}
+        </ul>
+  
+        <input 
+          class="selected-option" 
+          type="hidden" 
+          value="${currentValue}" 
+          data-button-id="${buttonConfig.buttonId}"
         >
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-        </svg>
-      </button>
-    
-      <ul
-        class="dropdown-menu transition-all duration-200 border-b-2 rounded-b-lg 
-              absolute z-10 hidden w-full bg-surface-secondary
-              overflow-y-auto max-h-60 divide-y-1 top-full"
-         role="listbox"
-         data-button-id="${buttonConfig.buttonId}"
-      >
-        ${optionsWithDefault.map(item => SelectButtonItem.render(item, buttonConfig.buttonId)).join('\n')}
-      </ul>
-    </div>
-    
-    <input 
-      class="selected-option"
-      type="hidden"  
-      name="selected_option_${buttonConfig.buttonId}" 
-      data-button-id="${buttonConfig.buttonId}"
-    >
-  `;
-
-    const container = document.createElement('div');
-    container.innerHTML = html;
-
-    requestAnimationFrame(() => this.init(buttonConfig.buttonId));
-
-    return html;
+      </div>
+    `;
   },
 
-  init(buttonId) {
-    const selectButton = document.querySelector(`[data-button-id="${buttonId}"].custom-select-button`);
-    const dropdownMenu = document.querySelector(`[data-button-id="${buttonId}"].dropdown-menu`);
-    const selectedValue = document.querySelector(`[data-button-id="${buttonId}"].selected-value`);
-    const hiddenInput = document.querySelector(`[data-button-id="${buttonId}"].selected-option`);
-
-    if (!selectButton || !dropdownMenu) {
-      console.warn(`SelectButton with id "${buttonId}" not found in DOM`);
-      return;
-    }
-
-    selectButton.addEventListener('click', (e) => {
-      e.stopPropagation();
-      const isHidden = dropdownMenu.classList.contains('hidden');
-
-      document.querySelectorAll('.dropdown-menu:not(.hidden)').forEach(menu => {
-        if (menu !== dropdownMenu) {
-          menu.classList.add('hidden');
-          const otherButton = document.querySelector(`[data-button-id="${menu.getAttribute('data-button-id')}"].custom-select-button`);
-          const otherArrow = otherButton?.querySelector('svg');
-          if (otherArrow) otherArrow.style.transform = 'rotate(0deg)';
-        }
-      });
-
-      dropdownMenu.classList.toggle('hidden', !isHidden);
-
-      const arrow = selectButton.querySelector('svg');
-      arrow.style.transform = isHidden ? 'rotate(180deg)' : 'rotate(0deg)';
-    });
-
-    document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape') {
-        document.querySelectorAll('.dropdown-menu:not(.hidden)').forEach(menu => {
-          menu.classList.add('hidden');
-          const button = document.querySelector(`[data-button-id="${menu.getAttribute('data-button-id')}"].custom-select-button`);
-          const arrow = button?.querySelector('svg');
-          if (arrow) arrow.style.transform = 'rotate(0deg)';
-        });
-      }
-    });
-
-    dropdownMenu.addEventListener('click', (e) => {
-      const option = e.target.closest('[data-value]');
-
-      if (option) {
-        const value = option.getAttribute('data-value');
-
-        selectedValue.textContent = option.textContent.trim();
-        if (hiddenInput) hiddenInput.value = value;
-
-        dropdownMenu.classList.add('hidden');
-        const arrow = selectButton.querySelector('svg');
-        arrow.style.transform = 'rotate(0deg)';
-
-        if (window.updateTransactionFilters) {
-          window.updateTransactionFilters();
-        }
-      }
-    });
+  setupGlobalListeners() {
+    if (this._isGlobalSetupDone) return;
 
     document.addEventListener('click', (e) => {
-      if (!selectButton.contains(e.target) && !dropdownMenu.contains(e.target)) {
-        dropdownMenu.classList.add('hidden');
-        const arrow = selectButton.querySelector('svg');
-        arrow.style.transform = 'rotate(0deg)';
+      const target = e.target;
+
+      // Select button
+      const btn = target.closest('.custom-select-button');
+      if (btn) {
+        const buttonId = btn.getAttribute('data-button-id');
+        const menu = document.querySelector(`.dropdown-menu[data-button-id="${buttonId}"]`);
+        const isHidden = menu.classList.contains('hidden');
+
+        this.closeAllMenus();
+        if (isHidden) {
+          menu.classList.remove('hidden');
+          btn.querySelector('svg').style.transform = 'rotate(180deg)';
+        }
+        return;
       }
+
+      // Option Button
+      const optionBtn = target.closest('.option-btn');
+      if (optionBtn) {
+        const buttonId = optionBtn.getAttribute('data-button-id');
+        const value = optionBtn.getAttribute('data-value');
+        const text = optionBtn.querySelector('span').textContent.trim();
+
+        const label = document.querySelector(`.selected-value[data-button-id="${buttonId}"]`);
+        const input = document.querySelector(`.selected-option[data-button-id="${buttonId}"]`);
+
+        if (label) label.textContent = text;
+        if (input) {
+          input.value = value;
+          input.dispatchEvent(new Event('change', { bubbles: true }));
+        }
+
+        this.closeAllMenus();
+        if (window.updateTransactionFilters) window.updateTransactionFilters();
+        return;
+      }
+
+      this.closeAllMenus();
     });
+
+    this._isGlobalSetupDone = true;
+  },
+
+  closeAllMenus() {
+    document.querySelectorAll('.dropdown-menu').forEach(m => m.classList.add('hidden'));
+    document.querySelectorAll('.custom-select-button svg').forEach(s => s.style.transform = 'rotate(0deg)');
   },
 
   getValue(buttonId) {
-    const selectedValue = document.querySelector(`[data-button-id="${buttonId}"].selected-value`);
-    const hiddenInput = document.querySelector(`[data-button-id="${buttonId}"].selected-option`);
-
-    if (!selectedValue || !hiddenInput) {
-      return { text: '', value: '' };
-    }
-
+    const input = document.querySelector(`.selected-option[data-button-id="${buttonId}"]`);
+    const label = document.querySelector(`.selected-value[data-button-id="${buttonId}"]`);
     return {
-      text: selectedValue.textContent,
-      value: hiddenInput.value
+      text: label ? label.textContent.trim() : '',
+      value: input ? input.value : ''
     };
   }
 };

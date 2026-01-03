@@ -9,6 +9,7 @@ const Transactions = {
   },
 
   init() {
+    TransactionFilters.init();
     TransactionsSection.init();
   }
 };

@@ -27,6 +27,12 @@ function createJWT(payload, expiresIn) {
 
 function verifyJWT(token) {
   try {
+    const jwtRegex = /^[a-zA-Z0-9_-]+\.[a-zA-Z0-9_-]+\.[a-zA-Z0-9_-]+$/;
+
+    if (!token || typeof token !== 'string' || !jwtRegex.test(token)) {
+      return null;
+    }
+
     const [encodedHeader, encodedPayload, signature] = token.split('.');
 
     const validSignature = crypto
@@ -34,14 +40,22 @@ function verifyJWT(token) {
       .update(`${encodedHeader}.${encodedPayload}`)
       .digest('base64url');
 
-    if (signature !== validSignature) return null;
+    const signatureBuffer = Buffer.from(signature);
+    const validSignatureBuffer = Buffer.from(validSignature);
+
+    if (signatureBuffer.length !== validSignatureBuffer.length ||
+      !crypto.timingSafeEqual(signatureBuffer, validSignatureBuffer)) {
+      return null;
+    }
 
     const payload = JSON.parse(Buffer.from(encodedPayload, 'base64url').toString());
 
-    if (payload.exp < Math.floor(Date.now() / 1000)) return null;
+    if (payload.exp < Math.floor(Date.now() / 1000)) {
+      return null;
+    }
 
     return payload;
-  } catch {
+  } catch (error) {
     return null;
   }
 }

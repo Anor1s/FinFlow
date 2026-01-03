@@ -19,7 +19,6 @@ const restoreTheme = () => {
   updateAllCharts();
 };
 
-// Функція для оновлення всіх графіків
 function updateAllCharts() {
   setTimeout(() => {
     const chartCanvases = document.querySelectorAll('canvas');
@@ -27,15 +26,6 @@ function updateAllCharts() {
       const chart = Chart.getChart(canvas);
       if (chart) {
         const chartId = canvas.id;
-
-        // Оновлюємо кольори для відповідного графіка
-        if (chartId === 'monthlyChart' && window.BarChartCreate) {
-          window.BarChartCreate.updateColors();
-        }
-
-        // else if (chartId === 'otherChart' && window.OtherChart) {
-        //   window.OtherChart.updateColors();
-        // }
       }
     });
   }, 50);

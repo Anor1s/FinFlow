@@ -15,6 +15,7 @@ const Dashboard = {
   },
 
   init() {
+    CashStatus.init();
     Diagrams.init();
     RecentTransactions.init();
   }

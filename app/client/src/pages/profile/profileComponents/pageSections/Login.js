@@ -8,8 +8,8 @@ import {
   PasswordInput,
   LogInButton,
   SignUpLink,
-
-  AuthService
+  AuthService,
+  Dialog
 } from '../../index.js'
 
 
@@ -36,8 +36,11 @@ const Login = {
   init() {
     Form.init(this.formId, async (formData) => {
       await AuthService.login(formData.username, formData.password);
-      alert('Welcome back!');
-      window.location.reload();
+      Dialog.alert('Welcome Back!');
+
+      setTimeout(() => {
+        window.location.reload();
+      }, 500);
     });
     PasswordInput.init(this.passwordId, this.passwordButtonId);
   }

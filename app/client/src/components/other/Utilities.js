@@ -28,4 +28,25 @@ const Debounce = function(func, delay) {
   };
 };
 
-export { Throttle, Debounce };
+const InitManagerCreate = function(Elements) {
+  if (!Array.isArray(Elements)) return;
+
+  Elements.forEach(component => {
+    if (component && typeof component.init === 'function' && !component._isInitialized) {
+      component.init();
+      component._isInitialized = true;
+    }
+  });
+};
+
+const InitManagerClear = function(Elements) {
+  if (!Array.isArray(Elements)) return;
+
+  Elements.forEach(component => {
+    if (component) component._isInitialized = false;
+  });
+};
+
+export { Throttle, Debounce, InitManagerCreate, InitManagerClear };
+
+

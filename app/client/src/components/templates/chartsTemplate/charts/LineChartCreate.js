@@ -1,12 +1,8 @@
-import { Chart, ChartsTemplate, ChartsStyles, getChartStyles } from './index.js';
-
-const allMonths = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-const allIncome = [1200, 1900, 1500, 1800, 2200, 2000, 2400, 2100, 2300, 2500, 2200, 2800];
-const allExpenses = [800, 1200, 1000, 1100, 1400, 1300, 1500, 1200, 1400, 1600, 1300, 1700];
-const allSavings = [300, 500, 450, 600, 750, 600, 800, 900, 850, 1000, 900, 950];
+import { Chart, ChartsTemplate, ChartsStyles, getChartStyles, ChartStore, FilterButtonsGetData, AppStore } from '../index.js';
 
 const LineChartCreate = {
   chart: null,
+  localData: { labels: [], income: [], expenses: [], savings: [] },
 
   render(chartId) {
     return ChartsTemplate.render(chartId);
@@ -14,98 +10,95 @@ const LineChartCreate = {
 
   getChartOptions(isLaptopOrLarger) {
     const styles = getChartStyles();
+    const currency = ChartsTemplate.getCurrencySymbol();
 
     return {
       responsive: true,
       maintainAspectRatio: false,
-      layout: {
-
+      interaction: {
+        mode: 'index',
+        intersect: false,
       },
       plugins: {
         legend: {
           display: true,
           position: 'bottom',
-          align: 'center',
-          fullSize: true,
           labels: {
             padding: 16,
             boxWidth: 16,
-            boxHeight: 16,
             font: {
               family: styles.fontFamily,
-              size: styles.fontSizeMain,
+              size: styles.fontSizeMain
             },
             color: styles.color,
           },
         },
         tooltip: {
-          mode: 'nearest',
-          intersect: true,
+          enabled: true,
           padding: 16,
-          caretSize: 8,
-          cornerRadius: 8,
+          backgroundColor: styles.backgroundColor,
+          titleColor: styles.color,
+          bodyColor: styles.color,
+          footerColor: styles.color,
+          borderColor: styles.border,
           bodyFont: {
             family: styles.fontFamily,
-            size: 16,
-            weight: 'normal',
+            size: 16
           },
           titleFont: {
             family: styles.fontFamily,
-            size: 20,
-            weight: 'bold'
+            size: 20, weight: 'bold'
           },
-          backgroundColor: styles.backgroundColor,
-          bodyColor: styles.color,
-          borderColor: styles.border,
-          borderWidth: 1,
+          footerFont: {
+            family: styles.fontFamily,
+            size: 16, weight: 'bold'
+          },
+          borderWidth: 2,
+          displayColors: true,
+          boxPadding: 6,
+          usePointStyle: false,
+
           callbacks: {
-            title: function(tooltipItems) {
-              if (tooltipItems.length > 0) {
-                return tooltipItems[0].label;
-              }
-              return '';
-            },
-            label: function(context) {
+            title: (context) => context[0].label,
+            label: (context) => {
               const label = context.dataset.label || '';
-              const value = context.parsed.y;
-              return `${label}: ${value}`;
+              const value = context.parsed.y || 0;
+              return `${label}: ${currency}  ${value.toLocaleString('ua-UA', { minimumFractionDigits: 2 })}`;
             },
-            afterLabel: function(context) {
+            afterLabel: (context) => {
               const datasetIndex = context.datasetIndex;
               const dataIndex = context.dataIndex;
 
               if (dataIndex > 0) {
-                const prevValue = context.chart.data.datasets[datasetIndex].data[dataIndex - 1];
+                const prevValue = parseFloat(context.chart.data.datasets[datasetIndex].data[dataIndex - 1]);
                 const currentValue = context.parsed.y;
-                const difference = currentValue - prevValue;
 
-                if (prevValue !== 0) {
-                  const differencePercentage = ((difference / prevValue) * 100).toFixed(2);
-                  const sign = difference >= 0 ? '+' : '';
-
-                  return `Change: ${sign}${differencePercentage}%`;
+                if (prevValue && prevValue !== 0) {
+                  const difference = currentValue - prevValue;
+                  const diffPct = ((difference / Math.abs(prevValue)) * 100).toFixed(1);
+                  const sign = difference >= 0 ? '↑ +' : '↓ ';
+                  return `  Change: ${sign}${diffPct}%`;
                 }
               }
-              return '';
+              return null;
             }
           },
           xAlign: 'center',
           yAlign: 'top',
-          caretPadding: 40, 
-          position: 'nearest',
+          caretPadding: 40,
         }
       },
       scales: {
         x: {
           grid: {
             color: `${styles.color}20`,
-            drawBorder: false,
+            drawBorder: false
           },
           ticks: {
             color: styles.color,
             font: {
               family: styles.fontFamily,
-              size: styles.fontSizeMain,
+              size: styles.fontSizeMain
             },
             maxRotation: 0,
             padding: 10
@@ -115,18 +108,16 @@ const LineChartCreate = {
           beginAtZero: true,
           grid: {
             color: `${styles.color}20`,
-            drawBorder: false,
+            drawBorder: false
           },
           ticks: {
             color: styles.color,
             font: {
               family: styles.fontFamily,
-              size: styles.fontSizeMain,
+              size: styles.fontSizeMain
             },
             padding: 10,
-            callback: function(value) {
-              return value;
-            }
+            callback: (value) => `${currency} ${value}`
           }
         }
       },
@@ -140,112 +131,108 @@ const LineChartCreate = {
           radius: 5,
           hoverRadius: 8,
           borderWidth: 2,
-          backgroundColor: styles.backgroundColor
+          backgroundColor:
+          styles.backgroundColor
         }
       }
     };
   },
 
-  init(chartId) {
+  async refreshChartData() {
+    if (ChartStore.invalidate) ChartStore.invalidate();
+    await this.updateChart();
+  },
+
+  async updateChart(monthsToShow = null) {
+    try {
+      if (!this.chart) return;
+
+      const filters = FilterButtonsGetData();
+      const params = {
+        from: filters.dateTimeFrom?.date || '',
+        to: filters.dateTimeTo?.date || ''
+      };
+
+      const rawData = await ChartStore.fetchChartsData(params);
+      const stats = rawData?.monthlyStats || [];
+
+      const isLaptopOrLarger = window.matchMedia(`(min-width: ${ChartsStyles.chartsBreakpoint})`).matches;
+      const count = monthsToShow || (isLaptopOrLarger ? 12 : 6);
+
+      const displayData = stats.slice(0, count);
+
+      this.localData.labels = displayData.map(d => d.month);
+      this.localData.income = displayData.map(d => d.income);
+      this.localData.expenses = displayData.map(d => d.expenses);
+      this.localData.savings = displayData.map(d => d.savings);
+
+      this.chart.options = this.getChartOptions(isLaptopOrLarger);
+      this.chart.data.labels = this.localData.labels;
+      this.chart.data.datasets[0].data = this.localData.income;
+      this.chart.data.datasets[1].data = this.localData.expenses;
+      this.chart.data.datasets[2].data = this.localData.savings;
+
+      this.chart.update();
+    } catch (error) {
+      console.error("Update Error:", error);
+    }
+  },
+
+  lineStyle(styles, type) {
+    return {
+      data: [],
+      borderColor: styles[`${type}Surface`],
+      backgroundColor: styles[`${type}Border`],
+      pointBackgroundColor: styles[`${type}Surface`],
+      pointBorderColor: styles.backgroundColor
+    };
+  },
+
+  async init(chartId) {
     const ctx = document.getElementById(chartId);
     if (!ctx) return;
 
     if (this.chart) {
       this.chart.destroy();
-      this.chart = null;
     }
 
+    const styles = getChartStyles();
     const isLaptopOrLarger = window.matchMedia(`(min-width: ${ChartsStyles.chartsBreakpoint})`).matches;
-    const monthsToShow = isLaptopOrLarger ? 12 : 6;
-
-    const displayMonths = allMonths.slice(0, monthsToShow);
-    const displayIncome = allIncome.slice(0, monthsToShow);
-    const displayExpenses = allExpenses.slice(0, monthsToShow);
-    const displaySavings = allSavings.slice(0, monthsToShow);
-
-    if (this.chart) {
-      this.updateChart(monthsToShow);
-      return;
-    }
-
-    const styles = getChartStyles(); // Додаємо тут отримання стилів
 
     this.chart = new Chart(ctx, {
       type: 'line',
       data: {
-        labels: displayMonths,
+        labels: [],
         datasets: [
-          {
-            label: 'Income',
-            data: displayIncome,
-            borderColor: styles.incomeSurface,
-            backgroundColor: styles.incomeBorder,
-            pointBackgroundColor: styles.incomeSurface,
-            pointBorderColor: styles.backgroundColor,
-            pointHoverBackgroundColor: styles.backgroundColor,
-            pointHoverBorderColor: styles.incomeSurface,
-            borderWidth: 3,
-            pointRadius: 5,
-            pointHoverRadius: 8,
+          { label: 'Income',
+            ...this.lineStyle(styles, 'income')
           },
-          {
-            label: 'Expenses',
-            data: displayExpenses,
-            borderColor: styles.expenseSurface,
-            backgroundColor: styles.expenseBorder,
-            pointBackgroundColor: styles.expenseSurface,
-            pointBorderColor: styles.backgroundColor,
-            pointHoverBackgroundColor: styles.backgroundColor,
-            pointHoverBorderColor: styles.expenseSurface,
-            borderWidth: 3,
-            pointRadius: 5,
-            pointHoverRadius: 8,
+          { label: 'Expenses',
+            ...this.lineStyle(styles, 'expense'),
           },
-          {
-            label: 'Savings',
-            data: displaySavings,
-            borderColor: styles.savingsSurface,
-            backgroundColor: styles.savingsBorder,
-            pointBackgroundColor: styles.savingsSurface,
-            pointBorderColor: styles.backgroundColor,
-            pointHoverBackgroundColor: styles.backgroundColor,
-            pointHoverBorderColor: styles.savingsSurface,
-            borderWidth: 3,
-            pointRadius: 5,
-            pointHoverRadius: 8,
+          { label: 'Savings',
+            ...this.lineStyle(styles, 'savings')
           }
         ]
       },
       options: this.getChartOptions(isLaptopOrLarger),
-
     });
+
+    window.LineChartInstance = this;
     window.addEventListener('resize', () => this.handleResize());
-  },
 
-  updateChart(monthsToShow = null) {
-    if (!this.chart) return;
-
-    const isLaptopOrLarger = window.matchMedia(`(min-width: ${ChartsStyles.chartsBreakpoint})`).matches;
-    const months = monthsToShow || (isLaptopOrLarger ? 12 : 6);
-
-    this.chart.data.labels = allMonths.slice(0, months);
-    this.chart.data.datasets[0].data = allIncome.slice(0, months);
-    this.chart.data.datasets[1].data = allExpenses.slice(0, months);
-    this.chart.data.datasets[2].data = allSavings.slice(0, months);
-
-    this.chart.options = this.getChartOptions(isLaptopOrLarger);
-    this.chart.update();
+    await this.updateChart();
   },
 
   updateColors() {
     if (!this.chart) return;
-
     const isLaptopOrLarger = window.matchMedia(`(min-width: ${ChartsStyles.chartsBreakpoint})`).matches;
     this.chart.options = this.getChartOptions(isLaptopOrLarger);
     this.chart.update();
   },
 
   handleResize() {
+    if (!this.chart) return;
     const isLaptopOrLarger = window.matchMedia(`(min-width: ${ChartsStyles.chartsBreakpoint})`).matches;
     const monthsToShow = isLaptopOrLarger ? 12 : 6;
     this.updateChart(monthsToShow);
@@ -253,3 +240,5 @@ const LineChartCreate = {
 };
 
 export default LineChartCreate;
+
+

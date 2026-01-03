@@ -1,4 +1,4 @@
-import { SectionHeading, TransactionList } from "../Index.js";
+import { SectionHeading, TableUi, TransactionsTable } from "../Index.js";
 
 const RecentTransactions  = {
   render() {
@@ -7,13 +7,13 @@ const RecentTransactions  = {
                         laptop:h-full laptop:w-2/3 laptop:py-0"
       >
           ${SectionHeading.render('Recent Transactions')}
-          ${TransactionList.renderList()}
+          ${TableUi.renderMainLayout(false)}
       </section>
     `;
   },
 
   init() {
-    TransactionList.init();
+    TransactionsTable.init();
   }
 };
 

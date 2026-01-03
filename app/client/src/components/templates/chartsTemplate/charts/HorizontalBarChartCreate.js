@@ -1,19 +1,17 @@
-import { Chart, ChartsTemplate, getChartStyles } from './index.js';
-
-const categories = ['Housing', 'Food', 'Transport', 'Shopping', 'Entertainment', 'Health', 'Savings', 'Other', 'Health', 'Savings', 'Other'];
-// const Spending = [1200, 400, 300, 200, 150, 100, 500, 200, 100, 500, 200];
-const data = [1200, 400, 300, 200, 157, 100, 500, 200, 100, 500, 200];
-const Spending = data.sort((a, b) => b - a);
+import { Chart, ChartsTemplate, getChartStyles, ChartStore, FilterButtonsGetData, AppStore } from '../index.js';
 
 const HorizontalBarChartCreate = {
   chart: null,
-
-  render(chartId) {
-    return ChartsTemplate.render(chartId);
+  localData: {
+    labels: [],
+    values: []
   },
+
+  render(chartId) { return ChartsTemplate.render(chartId); },
 
   getChartOptions() {
     const styles = getChartStyles();
+    const currency = ChartsTemplate.getCurrencySymbol();
 
     return {
       indexAxis: 'y',
@@ -21,66 +19,59 @@ const HorizontalBarChartCreate = {
       maintainAspectRatio: false,
       layout: {
         padding: {
-          top: 16,
+          top: 16
         }
       },
       plugins: {
-        // title: {
-        //   display: true,
-        //   text: 'Spending by Category',
-        //   position: 'top',
-        //   font: {
-        //     family: styles.fontFamily,
-        //     size: styles.fontSizeLabel,
-        //     weight: 'bold'
-        //   },
-        //   color: styles.color,
-        //
-        // },
         legend: {
-          display: false,
-          // position: 'bottom',
-          // align: 'center',
-          // labels: {
-          //   padding: 0,
-          //   boxWidth: 20,
-          //   font: {
-          //     family: styles.fontFamily,
-          //     size: 16
-          //   },
-          //   color: styles.color
-          // }
+          display: false
         },
         tooltip: {
-          padding: 12,
-          cornerRadius: 8,
+          enabled: true,
+          padding: 16,
+          backgroundColor: styles.backgroundColor,
+          titleColor: styles.color,
+          bodyColor: styles.color,
+          footerColor: styles.color,
+          borderColor: styles.border,
           bodyFont: {
             family: styles.fontFamily,
             size: 16
           },
           titleFont: {
             family: styles.fontFamily,
-            size: 14,
+            size: 20,
             weight: 'bold'
           },
-          backgroundColor: styles.backgroundColor,
-          bodyColor: styles.color,
-          borderColor: styles.border,
-          borderWidth: 1,
+          footerFont: {
+            family: styles.fontFamily,
+            size: 16,
+            weight: 'bold'
+          },
+          borderWidth: 2,
+          displayColors: true,
+          boxPadding: 6,
+          usePointStyle: false,
+
           callbacks: {
-            label: function(context) {
-              const total = context.dataset.data.reduce((a, b) => a + b, 0);
-              const percentage = ((context.parsed.x / total) * 100).toFixed(2);
-              return [
-                `${context.label}: ${context.parsed.x} (${percentage}%)`
-              ];
+            title: (context) => {
+              return `${context[0].label}`;
             },
-            title: function(tooltipItems) {
-              return 'Category Details:';
+
+            label: (context) => {
+              const total = context.dataset.data.reduce((a, b) => a + b, 0);
+              const value = context.parsed.x;
+              const percentage = total > 0 ? ((value / total) * 100).toFixed(1) : 0;
+
+              const formattedValue = value.toLocaleString('ua-UA', {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+              });
+
+              return `${currency} ${formattedValue} (${percentage}%)`;
             }
           }
         },
-
       },
       scales: {
         x: {
@@ -90,76 +81,72 @@ const HorizontalBarChartCreate = {
             drawBorder: false
           },
           ticks: {
-            font: {
-              family: styles.fontFamily,
-              size: 14
-            },
             color: styles.color,
-            callback: function(value) {
-              return `${value}`;
-            },
+            callback: (v) => `${v}${currency}` }
           },
-        },
         y: {
           grid: {
             color: styles.border,
             drawBorder: false
           },
           ticks: {
-            font: {
-              family: styles.fontFamily,
-              size: 15,
-              weight: '500'
-
-            },
             color: styles.color,
+            font: {
+              weight: '600',
+              size: 16
+            },
             padding: 10,
             mirror: true,
-            z: 20,
+            z: 20
           }
         }
       },
-      barPercentage: 0.7,
-      categoryPercentage: 0.8,
+      barPercentage: 0.7, categoryPercentage: 0.8,
       animation: {
         duration: 1000,
         easing: 'easeOutQuart'
-      },
+      }
     };
   },
 
-  init(chartId) {
+  async updateChart(forceRefresh = false) {
+    await ChartsTemplate.fetchAndRefresh(this, forceRefresh, (rawData) => {
+      let categories = [...(rawData?.categoryStats || [])];
+      categories.sort((a, b) => b.amount - a.amount);
+      return {
+        labels: categories.map(item => (item.category || 'Other').charAt(0).toUpperCase() + (item.category || 'Other').slice(1).toLowerCase()),
+        values: categories.map(item => parseFloat(item.amount) || 0)
+      };
+    });
+  },
+
+  async init(chartId) {
     const ctx = document.getElementById(chartId);
     if (!ctx) return;
-
-    if (this.chart) {
-      this.chart.destroy();
-      this.chart = null;
-    }
-
+    if (this.chart) this.chart.destroy();
     const styles = getChartStyles();
-
     this.chart = new Chart(ctx, {
       type: 'bar',
       data: {
-        labels: categories,
-        datasets: [
-          {
-            label: 'Spending',
-            data: Spending,
-            backgroundColor: styles.expenseSurface,
-            borderColor: styles.expenseBorder,
-            borderWidth: 2,
-            borderSkipped: false,
-            barThickness: 30,
-            hoverBorderWidth: 3,
-            hoverBorderColor: styles.color
-          }
-        ]
+        labels: [],
+        datasets: [{
+          label: 'Spending',
+          data: [],
+          backgroundColor: styles.expenseSurface,
+          borderColor: styles.expenseBorder,
+          borderWidth: 2,
+          borderSkipped: false,
+          barThickness: 40,
+          hoverBorderWidth: 3,
+          hoverBorderColor: styles.color
+        }]
       },
       options: this.getChartOptions()
     });
+    ChartsTemplate.subscribeRefresh(() => this.updateChart(true));
+    await this.updateChart();
   },
-};
 
+  async refreshChartData() { await this.updateChart(true); }
+};
 export default HorizontalBarChartCreate;

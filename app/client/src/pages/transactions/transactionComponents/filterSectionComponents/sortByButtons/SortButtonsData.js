@@ -11,12 +11,6 @@ const SortButtonsData = [
   SortByAmountButton
 ];
 
-SortButtonsData.forEach(component => {
-  if (component.init) {
-    component.init();
-  }
-});
 
-SortButtonCreate.initButtons();
 
 export default SortButtonsData;

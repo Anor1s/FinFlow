@@ -1,5 +1,4 @@
-import { StandardButtonCreate, LogOutIcon, AuthService } from '../../../index.js'
-import { clearCache } from '../../../../../router/Router.js';
+import { StandardButtonCreate, LogOutIcon, AuthService, Cache } from '../../../index.js'
 
 const ButtonConfig = {
   text: 'Log Out',
@@ -26,8 +25,8 @@ const LogOutButton = {
         try {
           await AuthService.logout();
 
-          if (typeof clearCache === 'function') {
-            clearCache();
+          if (typeof Cache.clearCache === 'function') {
+            Cache.clearCache();
           }
 
           window.location.reload();;

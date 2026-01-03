@@ -1,4 +1,5 @@
-import { AuthService, DeleteAccountIcon } from '../../../index.js'
+import { AuthService, DeleteAccountIcon, Dialog } from '../../../index.js'
+
 
 const DeleteAccountButton = {
   render() {
@@ -26,16 +27,22 @@ const DeleteAccountButton = {
     button.addEventListener('click', async (e) => {
       e.preventDefault();
 
-      // Security check: Ask for user confirmation before deletion.
-      const isConfirmed = confirm('Are you sure you want to delete your account? This action is permanent and cannot be undone.');
+      const confirmed = await Dialog.confirm('Are you sure you want to delete your account? This action is permanent and cannot be undone.', {
+        title: 'Confirm delete account',
+        confirmText: 'Delete',
+        cancelText: 'Back',
+      });
 
-      if (isConfirmed) {
+      if (confirmed) {
         try {
           await AuthService.deleteAccount();
           localStorage.removeItem('isLoggedIn');
 
-          alert('Your account has been successfully deleted.');
-          window.location.href = '/';
+          Dialog.alert('Your account has been successfully deleted.');
+
+          setTimeout(() => {
+            window.location.href = '/';
+          }, 500);
 
         } catch (error) {
           console.error("ACCOUNT_DELETION_FAILED:", error.message);
