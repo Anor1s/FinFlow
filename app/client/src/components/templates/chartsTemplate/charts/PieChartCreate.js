@@ -81,6 +81,7 @@ const PieChartCreate = {
     const ctx = document.getElementById(chartId);
     if (!ctx) return;
     if (this.chart) this.chart.destroy();
+    window.PieChartInstance = this;
     this.chart = new Chart(ctx, {
       type: 'doughnut',
       data: {

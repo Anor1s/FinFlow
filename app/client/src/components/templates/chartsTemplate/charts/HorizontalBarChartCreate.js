@@ -124,6 +124,8 @@ const HorizontalBarChartCreate = {
     const ctx = document.getElementById(chartId);
     if (!ctx) return;
     if (this.chart) this.chart.destroy();
+
+    window.HorizontalBarChartInstance = this;
     const styles = getChartStyles();
     this.chart = new Chart(ctx, {
       type: 'bar',

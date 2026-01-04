@@ -11,17 +11,17 @@ exports.updateStandardCurrency = async (req, res) => {
     }
 
     await pool.query('UPDATE users SET base_currency = $1 WHERE id = $2', [baseCurrency, userId]);
-    await CurrencySyncService.syncRatesForUser(baseCurrency);
+    await CurrencySyncService.syncRatesForUser(userId, baseCurrency);
 
     const massUpdateQuery = `
-      UPDATE transactions t
-      SET 
-        amount_base = t.amount * COALESCE(er.rate, 1),
-        exchange_rate = COALESCE(er.rate, 1)
-      FROM exchange_rates er
-      WHERE t.user_id = $1 
-        AND er.from_currency = t.currency 
-        AND er.to_currency = $2
+        UPDATE transactions t
+        SET
+            amount_base = t.amount * er.rate,
+            exchange_rate = er.rate
+            FROM exchange_rates er
+        WHERE t.user_id = $1
+          AND er.from_currency = t.currency
+          AND er.to_currency = $2
     `;
 
     await pool.query(massUpdateQuery, [userId, baseCurrency]);
