@@ -114,7 +114,7 @@ const HorizontalBarChartCreate = {
       let categories = [...(rawData?.categoryStats || [])];
       categories.sort((a, b) => b.amount - a.amount);
       return {
-        labels: categories.map(item => (item.category || 'Other').charAt(0).toUpperCase() + (item.category || 'Other').slice(1).toLowerCase()),
+        labels: categories.map(item => item.categoryDisplayName),
         values: categories.map(item => parseFloat(item.amount) || 0)
       };
     });

@@ -67,10 +67,7 @@ const PieChartCreate = {
       if (categories.length === 0) return { labels: ['No data available'], values: [1], colors: ['#3f3f46'] };
 
       return {
-        labels: categories.map(item => {
-          const cat = item.category || 'Other';
-          return cat.charAt(0).toUpperCase() + cat.slice(1).toLowerCase();
-        }),
+        labels: categories.map(item => item.categoryDisplayName),
         values: categories.map(item => item.amount),
         colors: ['#FF8FA3', '#6EC6FF', '#FFD966', '#66CFC7', '#B399FF', '#FFB366', '#FF6B6B', '#9EE86F']
       };

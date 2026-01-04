@@ -1,4 +1,4 @@
-import { ChartStore, AppStore, FilterButtonsGetData } from './index.js';
+import { ChartStore, AppStore, FilterButtonsGetData, CategoryButtonData } from './index.js';
 
 const ChartsTemplate = {
   refreshCallbacks: [],
@@ -45,9 +45,7 @@ const ChartsTemplate = {
 
   async fetchAndRefresh(instance, forceRefresh = false, dataProcessor) {
     try {
-      if (forceRefresh && ChartStore.invalidate) {
-        ChartStore.invalidate();
-      }
+      if (forceRefresh && ChartStore.invalidate) ChartStore.invalidate();
 
       const filters = FilterButtonsGetData();
       const params = {
@@ -56,6 +54,19 @@ const ChartsTemplate = {
       };
 
       const rawData = await ChartStore.fetchChartsData(params);
+      const categoryMap = new Map(CategoryButtonData.map(item => [item.value, item]));
+
+      if (rawData && rawData.categoryStats) {
+        rawData.categoryStats = rawData.categoryStats.map(stat => {
+          const found = categoryMap.get(stat.category);
+          return {
+            ...stat,
+            categoryDisplayName: found ? found.text : stat.category,
+            categoryIcon: found ? found.icon : null
+          };
+        });
+      }
+
       const processed = dataProcessor(rawData);
 
       if (instance.chart) {
@@ -69,7 +80,6 @@ const ChartsTemplate = {
             }
           });
         } else if (processed.values) {
-
           instance.chart.data.datasets[0].data = processed.values;
           if (processed.colors) {
             instance.chart.data.datasets[0].backgroundColor = processed.colors;
@@ -81,7 +91,7 @@ const ChartsTemplate = {
       console.error("Chart Update Error:", error);
     }
   }
-}
+};
 
 window.addEventListener('transactionAdded', async () => {
   for (const callback of ChartsTemplate.refreshCallbacks) {
