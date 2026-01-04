@@ -58,10 +58,9 @@ app.listen(PORT, async () => {
   console.log(`Allowed Origin: ${CORS_ORIGIN}`);
 
   try {
-
-    await currencySyncService.syncRatesForUser('UAH');
-    await currencySyncService.syncRatesForUser('USD');
-    await currencySyncService.syncRatesForUser('EUR');
+    await currencySyncService.syncRatesForUser(null, 'UAH');
+    await currencySyncService.syncRatesForUser(null, 'USD');
+    await currencySyncService.syncRatesForUser(null, 'EUR');
   } catch (err) {
     console.error('Synchronization error at startup:', err.message);
   }
