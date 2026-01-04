@@ -1,4 +1,6 @@
-const iconsPath = '/src/assets/icons/navigation/other/';
+const BASE = import.meta.env.BASE_URL;
+const iconsPath = `${BASE}/assets/icons/navigation/other/`;
+
 const OtherItemsData = [
   {
     icon: `${iconsPath}settings.svg`,

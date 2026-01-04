@@ -1,4 +1,6 @@
-const iconsPath = '/src/assets/icons/navigation/menu/';
+const BASE = import.meta.env.BASE_URL;
+const iconsPath = `${BASE}/assets/icons/navigation/menu/`;
+
 const MenuItemsData = [
   {
     icon: `${iconsPath}Overview.svg`,

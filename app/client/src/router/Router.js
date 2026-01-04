@@ -1,5 +1,5 @@
 import {
-  Routes, // Зверни увагу: імпорт з великої літери
+  Routes,
   Cache,
   Auth,
   Ui
@@ -7,6 +7,7 @@ import {
 
 const Router = {
   currentPath: null,
+  VITE_BASE_PATH: import.meta.env.VITE_BASE_PATH.replace(/\/$/, ''),
 
   init() {
     window.addEventListener('popstate', () => this.handleRouteChange());
@@ -23,21 +24,25 @@ const Router = {
   },
 
   navigateTo(path) {
-    const route = Routes[path];
     let targetPath = path;
 
-    if (route?.requiresAuth && !Auth.isAuthenticated()) {
+    if (Routes[path]?.requiresAuth && !Auth.isAuthenticated()) {
       targetPath = '/profile';
     }
 
-    if (window.location.pathname === targetPath && this.currentPath === targetPath) return;
+    const fullPath = `${this.VITE_BASE_PATH}${targetPath}`;
 
-    window.history.pushState(null, null, targetPath);
+    if (window.location.pathname === fullPath && this.currentPath === targetPath) return;
+
+    window.history.pushState(null, null, fullPath);
     this.handleRouteChange();
   },
 
   handleRouteChange() {
-    const path = window.location.pathname;
+    let path = window.location.pathname;
+    if (path.startsWith(this.VITE_BASE_PATH)) {
+      path = path.substring(this.VITE_BASE_PATH.length) || '/';
+    }
 
     let route = Routes[path];
 
@@ -61,7 +66,6 @@ const Router = {
     Ui.updateHeaderTitle(route.title);
     const mainContent = document.getElementById('main-content');
 
-    // Caching Logic
     if (Cache.has(path)) {
       mainContent.innerHTML = Cache.get(path);
       Cache.updateQueue(path);
@@ -71,7 +75,6 @@ const Router = {
       Cache.add(path, content);
     }
 
-    // Component logic initialization
     if (route.component.init) {
       route.component.init();
     }
