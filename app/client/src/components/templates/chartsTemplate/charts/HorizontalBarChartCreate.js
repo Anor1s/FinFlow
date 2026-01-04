@@ -17,6 +17,8 @@ const HorizontalBarChartCreate = {
       indexAxis: 'y',
       responsive: true,
       maintainAspectRatio: false,
+      animation: false,
+      animations: false,
       layout: {
         padding: {
           top: 16

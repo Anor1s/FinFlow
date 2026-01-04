@@ -22,6 +22,18 @@ export async function initApp() {
   });
 }
 
+window.addEventListener('load', () => {
+  const preloader = document.getElementById('preloader');
+
+  setTimeout(() => {
+    preloader.classList.add('loader-hidden');
+
+    setTimeout(() => {
+      preloader.remove();
+    }, 500);
+  }, 300);
+});
+
 function renderAppLayout(title = 'FinFlow') {
   const app = document.getElementById('app');
   app.innerHTML = `
