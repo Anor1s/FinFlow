@@ -7,7 +7,7 @@ import {
 
 const Router = {
   currentPath: null,
-  VITE_BASE_PATH: import.meta.env.VITE_BASE_PATH.replace(/\/$/, ''),
+  VITE_BASE_PATH: import.meta.env.VITE_BASE_PATH,
 
   init() {
     window.addEventListener('popstate', () => this.handleRouteChange());

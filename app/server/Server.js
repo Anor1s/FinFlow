@@ -15,7 +15,7 @@ const currencySyncService = require('./src/services/CurrencySyncService');
 const app = express();
 
 const allowedOrigins = [
-  process.env.LOCAL,
+  process.env.LOCAL_URL,
   process.env.CORS_ORIGIN
 ].filter(Boolean);
 
