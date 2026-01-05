@@ -1,15 +1,14 @@
-const BASE = import.meta.env.BASE_URL;
-const iconsPath = `${BASE}/assets/icons/navigation/other/`;
+import { SettingsIcon, ProfileIcon } from "../../index.js"
 
 const OtherItemsData = [
   {
-    icon: `${iconsPath}settings.svg`,
+    icon: SettingsIcon,
     text: 'Settings',
     alt: 'Overview icon',
     href: '/settings',
   },
   {
-    icon: `${iconsPath}/Profile.svg`,
+    icon: ProfileIcon,
     text: 'Profile',
     alt: 'Profile avatar',
     href: '/profile',

@@ -1,4 +1,4 @@
-import FinFlowIcon from '../../../public/assets/icons/FinFlow.svg';
+import { FinFlowIcon } from './Index.js'
 
 const Logo = {
   render() {

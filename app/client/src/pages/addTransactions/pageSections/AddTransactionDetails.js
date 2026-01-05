@@ -3,7 +3,6 @@ import {
   NoteTextarea, DetailButtonsRender, AddTransactionButton,
   DetailButtonsGetData, TransactionService, DateTimeButton, Dialog,
 
-
   InitManagerCreate,
   InitManagerClear
 } from '../index.js';

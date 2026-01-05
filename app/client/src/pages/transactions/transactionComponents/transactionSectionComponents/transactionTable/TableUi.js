@@ -3,10 +3,10 @@ import { NoTransactionsFound, Transaction, PageItem, PageList } from '../../../i
 const TableUi = {
   renderMainLayout(withPagination = true) {
     return `
-      <div class="h-include-top w-full flex flex-col gap-2">
+      <div class="h-full w-full flex flex-col ${withPagination ? 'gap-2' : ''}">
         <ul 
-          class="h-full w-full rounded-2xl gradient-secondary py-[16px] overflow-y-auto relative 
-                   divide-y-2 divide-surface-secondary" 
+          class="flex-1 w-full rounded-2xl gradient-secondary py-[16px] overflow-hidden relative 
+                   divide-y-2 divide-surface-secondary min-h-0" 
           id="all-transactions-table">
         </ul>
           ${withPagination 

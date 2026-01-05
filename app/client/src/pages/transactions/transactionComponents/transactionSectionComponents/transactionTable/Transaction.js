@@ -42,7 +42,7 @@ const Transaction = {
 
     return `
         <li 
-          class="transaction h-[80px] w-full flex flex-col px-[16px]  
+          class="transaction h-[80px] w-full flex flex-col px-[16px]
                 items-center justify-center gap-xs hover:bg-surface duration-200 
                 hover:cursor-pointer transition ease transition-color"
           id="${transactionData.id}"
@@ -79,7 +79,7 @@ const Transaction = {
                         
           <div class="w-full flex flex-row justify-between gap-sm text-xs mobile:text-sm text-text-secondary">
             <div class="flex flex-row gap-sm">
-              <span class="text-base text-text-primary">${transactionData.place || ''}</span>
+              <span class="hidden mobile:block text-base text-text-primary">${transactionData.place || ''}</span>
               <span class="text-base text-text-primary">${transactionData.date}</span>
             </div>
             

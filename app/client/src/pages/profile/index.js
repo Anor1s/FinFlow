@@ -6,16 +6,17 @@ export { default as StandardButtonCreate } from '../../components/templates/butt
 export { default as LinkButtonCreate } from '../../components/templates/buttonsTemplate/linkButton/LinkButtonCreate.js'
 
 // Icons
-export { default as HidePasswordIcon } from '../../../public/assets/icons/profile/HidePassword.svg'
-export { default as ShowPasswordIcon } from '../../../public/assets/icons/profile/ShowPassword.svg'
+export { default as HidePasswordIcon } from '../../assets/icons/profile/HidePassword.svg'
 
-export { default as ErrorIcon } from '../../../public/assets/icons/profile/Error.svg'
+export { default as ShowPasswordIcon } from '../../assets/icons/profile/ShowPassword.svg'
 
-export { default as LogInIcon } from '../../../public/assets/icons/profile/LogIn.svg'
-export { default as LogOutIcon } from '../../../public/assets/icons/profile/LogOut.svg'
-export { default as SignUpIcon } from '../../../public/assets/icons/profile/SignUp.svg'
+export { default as ErrorIcon } from '../../assets/icons/profile/Error.svg'
 
-export { default as DeleteAccountIcon } from '../../../public/assets/icons/profile/DeleteAccount.svg'
+export { default as LogInIcon } from '../../assets/icons/profile/LogIn.svg'
+export { default as LogOutIcon } from '../../assets/icons/profile/LogOut.svg'
+export { default as SignUpIcon } from '../../assets/icons/profile/SignUp.svg'
+
+export { default as DeleteAccountIcon } from '../../assets/icons/profile/DeleteAccount.svg'
 
 // Utilities
 export { Throttle, Debounce } from '../../components/other/Utilities.js'

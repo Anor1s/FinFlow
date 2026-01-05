@@ -1,9 +1,7 @@
-import { ColorButtonsItem, InitManagerCreate, InitManagerClear } from "../../../index.js";
+import { ColorButtonsItem } from "../../../index.js";
 
 const ColorButtonsList = {
   render(buttonsArray) {
-    InitManagerClear(buttonsArray);
-
     return`
       <div class="flex flex-col gap-xs w-full ">  
         <span class="" id="colors-label">Colors</span> 
@@ -17,10 +15,6 @@ const ColorButtonsList = {
       </div>
     `;
   },
-
-  init(buttonsArray) {
-    InitManagerCreate(buttonsArray);
-  }
 };
 
 export default ColorButtonsList;

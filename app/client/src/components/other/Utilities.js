@@ -32,7 +32,7 @@ const InitManagerCreate = function(Elements) {
   if (!Array.isArray(Elements)) return;
 
   Elements.forEach(component => {
-    if (component && typeof component.init === 'function' && !component._isInitialized) {
+    if (component && typeof component.init === 'function') {
       component.init();
       component._isInitialized = true;
     }

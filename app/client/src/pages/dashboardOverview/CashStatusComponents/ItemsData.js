@@ -1,5 +1,5 @@
 const BASE = import.meta.env.BASE_URL;
-const iconsPath = `${BASE}/assets/icons/overviewCards`;
+const iconsPath = `${BASE}/dashboardOverviewIcons`;
 
 const ItemsData = {
   getCurrencySymbol(code) {

@@ -7,14 +7,14 @@ export { default as FilterCriteria } from './transactionComponents/filterSection
 export { default as SortBy } from './transactionComponents/filterSectionComponents/SortBy.js';
 
 // Icons
-export { default as TableIncomeIcon } from '../../../public/assets/icons/transaction/Income.svg'
-export { default as TableExpenseIcon } from '../../../public/assets/icons/transaction/Expense.svg'
+export { default as TableIncomeIcon } from '../../assets/icons/transaction/Income.svg'
+export { default as TableExpenseIcon } from '../../assets/icons/transaction/Expense.svg'
 
-export { default as NoTransactionsFound } from '../../../public/assets/icons/transaction/NoTransactionsFound.svg';
+export { default as NoTransactionsFound } from '../../assets/icons/transaction/NoTransactionsFound.svg';
 
-export { default as CloseIcon } from '../../../public/assets/icons/transaction/modal/Close.svg'
-export { default as EditIcon } from '../../../public/assets/icons/transaction/modal/Edit.svg'
-export { default as DeleteIcon } from '../../../public/assets/icons/transaction/modal/Delete.svg'
+export { default as CloseIcon } from '../../assets/icons/transaction/modal/Close.svg'
+export { default as EditIcon } from '../../assets/icons/transaction/modal/Edit.svg'
+export { default as DeleteIcon } from '../../assets/icons/transaction/modal/Delete.svg'
 
 // Correct sequence
 
@@ -23,7 +23,7 @@ export { default as AppStore } from '../../stores/AppStore.js'
 
 // Search Bar
 export { default as SearchBar } from './transactionComponents/filterSectionComponents/searchBar/SearchBar.js';
-export { default as SearchIcon } from '../../../public/assets/icons/input/Search.svg';
+export { default as SearchIcon } from '../../assets/icons/input/Search.svg';
 
 // Filter section
 export { default as SelectButtonCreate }  from '../../components/templates/buttonsTemplate/selectButton/SelectButtonCreate.js';

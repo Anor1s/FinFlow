@@ -6,7 +6,7 @@ import {
 const TransactionsSection = {
   render() {
     return `
-      <section class="h-full laptop:h-include-top w-full flex flex-col gap-sm"> 
+      <section class="h-screen-pad laptop:h-include-top w-full flex flex-col gap-sm"> 
         ${SectionHeading.render('All transactions')}
         ${TransactionsTable.render()}
       </section>

@@ -9,8 +9,8 @@ export { default as DateButtonCreate } from '../../components/templates/buttonsT
 export { default as TextButtonCreate } from '../../components/templates/buttonsTemplate/textButton/TextButtonCreate.js'
 
 // Transaction type Icons
-export { default as IncomeIcon } from '../../../public/assets/icons/transaction/Income.svg'
-export { default as ExpenseIcon } from '../../../public/assets/icons/transaction/Expense.svg'
+export { default as IncomeIcon } from '../../assets/icons/transaction/Income.svg'
+export { default as ExpenseIcon } from '../../assets/icons/transaction/Expense.svg'
 
 // Detail buttons
 export { default as AmountButton } from './addTransactionComponents/addTransactionButtons/buttons/Amount.js'
