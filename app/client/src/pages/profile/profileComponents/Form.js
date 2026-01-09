@@ -1,16 +1,21 @@
-import { Debounce, ErrorIcon } from "../index.js";
+import { Debounce, ErrorIcon, Dialog } from "../index.js";
 
 const Form = {
   render(formId, formParts) {
     return `
-      <form class="flex flex-col gap-xs w-full" id="${formId}">
+      <form 
+        class="flex flex-col gap-base w-full" 
+        id="${formId}"
+      >
          ${formParts.join('\n')}
       </form>
     `
   },
 
-  init(formId) {
+  init(formId, onSubmit) {
     const form = document.getElementById(formId);
+    if (!form) return;
+
     const inputs = form.querySelectorAll('input');
 
     const debouncedValidate = Debounce(function(field) {
@@ -93,19 +98,28 @@ const Form = {
       return isValid;
     }
 
-    form.addEventListener('submit', function (event) {
+    form.addEventListener('submit', async function (event) {
       event.preventDefault();
 
       let formIsValid = true;
+      const formData = {};
 
       inputs.forEach(input => {
         if (!validateField(input)) {
           formIsValid = false;
-        }
+        };
+
+        if (input.name) {
+          formData[input.name] = input.value;
+        };
       });
 
-      if (formIsValid) {
-        alert('Submit');
+      if (formIsValid && onSubmit) {
+        try {
+          await onSubmit(formData);
+        } catch (error) {
+          Dialog.alert(error.message);
+        }
       }
     });
   }

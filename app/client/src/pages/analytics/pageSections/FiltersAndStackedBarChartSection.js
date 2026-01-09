@@ -1,13 +1,18 @@
 import {
   StackedBarChartCreate,
   SectionHeading,
-  FilterButtonsList, FilterButtonsData
+  FilterButtonsList,
+  FilterButtonsData,
+  InitManagerCreate,
+  InitManagerClear
 } from "../index.js";
 
-const StackedBarChartId = 'analyticsStackedBarChart'
-
 const FiltersAndStackedBarChartSection = {
+  StackedBarChartId: 'analyticsStackedBarChart',
+
   render() {
+    InitManagerClear(FilterButtonsData);
+
     return `
       <section class="h-full  w-full flex flex-col gap-base">
         <div class="h-fit w-full flex flex-col gap-sm">
@@ -15,16 +20,17 @@ const FiltersAndStackedBarChartSection = {
           ${FilterButtonsList.render(FilterButtonsData)}
         </div>
         
-         <div class="h-full mobile:h-full w-full flex flex-col gap-sm ">
+         <div class="h-screen-pad mobile:h-full w-full flex flex-col gap-sm ">
             ${SectionHeading.render('Budget Allocation')}
-            ${StackedBarChartCreate.render(StackedBarChartId)}
+            ${StackedBarChartCreate.render(this.StackedBarChartId)}
         </div>
       </section>
     `
   },
 
   init() {
-    StackedBarChartCreate.init(StackedBarChartId);
+    InitManagerCreate(FilterButtonsData);
+    StackedBarChartCreate.init(this.StackedBarChartId);
   }
 };
 

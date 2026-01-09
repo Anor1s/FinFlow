@@ -23,31 +23,29 @@ const ColorButtonCreate = {
     const button = document.getElementById(buttonConfig.buttonId);
     if (!button) return;
 
-    const setColorScheme = (colorName, colorFirst, colorSecond) => {
-      setCSSGradient('primary', colorFirst, colorSecond);
-
-      document.querySelectorAll('[id$="-theme-color-button"]').forEach(button => {
-        const isActive = button.dataset.colorName === colorName;
-        button.classList.toggle('theme-and-colors-active', isActive);
-        button.setAttribute('aria-pressed', isActive.toString());
+    const updateActiveState = (activeName) => {
+      const allColorButtons = document.querySelectorAll('[id$="-theme-color-button"]');
+      allColorButtons.forEach(btn => {
+        const isActive = btn.dataset.colorName === activeName;
+        btn.classList.toggle('theme-and-colors-active', isActive);
+        btn.setAttribute('aria-pressed', isActive.toString());
       });
+    };
+
+    const savedColorScheme = localStorage.getItem('colorScheme');
+    if (savedColorScheme) {
+      updateActiveState(savedColorScheme);
+    }
+
+    button.addEventListener("click", () => {
+      const { colorName, colorFirst, colorSecond } = buttonConfig;
+
+      setCSSGradient('primary', colorFirst, colorSecond);
+      updateActiveState(colorName);
 
       localStorage.setItem('colorScheme', colorName);
       localStorage.setItem('colorFirst', colorFirst);
       localStorage.setItem('colorSecond', colorSecond);
-    };
-
-    const savedColorScheme = localStorage.getItem('colorScheme');
-    const allColorButtons = document.querySelectorAll('[id$="-theme-color-button"]');
-
-    allColorButtons.forEach(button => {
-      const isActive = button.dataset.colorName === savedColorScheme;
-      button.classList.toggle('theme-and-colors-active', isActive);
-      button.setAttribute('aria-pressed', isActive.toString());
-    });
-
-    button.addEventListener("click", () => {
-      setColorScheme(buttonConfig.colorName, buttonConfig.colorFirst, buttonConfig.colorSecond);
     });
   }
 };

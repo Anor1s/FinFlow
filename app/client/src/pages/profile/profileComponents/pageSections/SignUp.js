@@ -8,7 +8,9 @@ import {
   PasswordInput,
   RepeatPasswordInput,
   SignUpButton,
-  LogInLink
+  LogInLink,
+  AuthService,
+  Dialog
 } from '../../index.js'
 
 
@@ -36,7 +38,14 @@ const SignUp = {
   },
 
   init() {
-    Form.init(this.formId);
+    Form.init(this.formId, async (formData) => {
+      await AuthService.register(formData.username, formData.email, formData.password, formData.repeatPassword);
+      Dialog.alert('Registration successful. Your account has been created.');
+
+      setTimeout(() => {
+        window.location.reload();
+      }, 500);
+    });
     PasswordInput.init(this.passwordId, this.passwordButtonId);
     RepeatPasswordInput.init(this.repeatPasswordId, this.repeatPasswordButtonId);
   }

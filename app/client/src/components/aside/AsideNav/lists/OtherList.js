@@ -1,8 +1,5 @@
 import { AsideNavItem, OtherItemsData } from '../../Index.js';
 
-
-
-
 const OtherList = {
   render() {
     return `

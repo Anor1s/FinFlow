@@ -1,7 +1,7 @@
 import { SelectButtonCreate, TransactionTypeButtonData } from '../../../index.js';
 
 const ButtonConfig = {
-  categoryName: "Transaction Type",
+  categoryName: "Transaction Type*",
   buttonId: "detailsTransactionType",
 };
 

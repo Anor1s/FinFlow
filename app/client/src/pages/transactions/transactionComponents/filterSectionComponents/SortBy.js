@@ -1,7 +1,9 @@
-import { SectionHeading, SortButtonsList, SortButtonsData } from '../../index.js';
+import { SectionHeading, SortButtonsList, SortButtonsData, InitManagerClear, InitManagerCreate, SortButtonCreate } from '../../index.js';
 
 const SortBy = {
   render() {
+    InitManagerClear(SortButtonsData);
+
     return `
       <div class="w-full flex flex-col gap-base"> 
         <div class="flex flex-col gap-sm">
@@ -10,6 +12,11 @@ const SortBy = {
         </div>
       </div>
     `;
+  },
+
+  init() {
+    InitManagerCreate(SortButtonsData);
+    SortButtonCreate.initButtons();
   }
 };
 

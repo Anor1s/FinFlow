@@ -11,8 +11,8 @@ const Header = {
                 class="text-2xl font-bold ml-[16px] tablet:ml-[24px] tracking-wide"
                 style="text-shadow: 
                       1px 0 0 #666,
-                      2px 0 0 #555;"
-     
+                      2px 0 0 #555;
+                "
               >
                 ${title}
               </h2>

@@ -4,7 +4,7 @@ const AmountButton = {
   render() {
     return `
       <div class="h-full flex flex-col gap-xs">
-        <span class="text-base text-text-primary">Amount</span>
+        <span class="text-base text-text-primary">Amount*</span>
         <input 
           class="w-full h-button bg-surface rounded p-[16px] text-text-tertiary" 
           type="number" 

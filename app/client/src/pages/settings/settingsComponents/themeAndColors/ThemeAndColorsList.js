@@ -1,9 +1,11 @@
-import { ThemeButtons, ColorButtonsList, ColorButtonsData } from "../../index.js";
+import { ThemeButtons, ColorButtonsList, ColorButtonsData, InitManagerCreate, InitManagerClear } from "../../index.js";
 
 const ThemeAndColorsList = {
   render() {
+    InitManagerClear(ColorButtonsData)
+
     return `
-     <div class="flex flex-col mobile:flex-row laptop:w-1/2 gap-base">
+     <div class="flex flex-col mobile:flex-row gap-base">
       ${ThemeButtons.render()}
       ${ColorButtonsList.render(ColorButtonsData)}
      </div>
@@ -11,8 +13,8 @@ const ThemeAndColorsList = {
   },
 
   init() {
+    InitManagerCreate(ColorButtonsData);
     ThemeButtons.init();
-    ColorButtonsList.init(ColorButtonsData);
   }
 };
 

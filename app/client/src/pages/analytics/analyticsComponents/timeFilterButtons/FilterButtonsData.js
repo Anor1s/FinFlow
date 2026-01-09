@@ -10,10 +10,4 @@ const FilterButtonsData = [
   DateTimeToButton,
 ];
 
-FilterButtonsData.forEach(component => {
-  if (component.init) {
-    component.init();
-  }
-});
-
 export default FilterButtonsData;

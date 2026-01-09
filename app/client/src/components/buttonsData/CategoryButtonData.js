@@ -20,7 +20,6 @@ import {
 } from './index.js'
 
 const CategoryButtonData = [
-  // Витрати (Expenses)
   { value: 'housing', icon: HousingIcon, text: 'Housing' },
   { value: 'foodAndDrinks', icon: FoodAndDrinksIcon, text: 'Food & Drinks' },
   { value: 'transport', icon: TransportIcon, text: 'Transport' },
@@ -37,11 +36,7 @@ const CategoryButtonData = [
   { value: 'travel', icon: TravelIcon, text: 'Travel' },
   { value: 'beauty', icon: BeautyIcon, text: 'Beauty' },
   { value: 'pets', icon: PetsIcon, text: 'Pets' },
-  // Доходи (Income)
   { value: 'salary', icon: SalaryIcon, text: 'Salary' },
-  //{ value: 'investments', icon: Analytics, text: 'Investments' },
-  //{ value: 'otherIncome', icon: Analytics, text: 'Other Income' },
-  // Спеціальні категорії (Special)
   { value: 'savings', icon: SavingsIcon, text: 'Savings' }
 ];
 

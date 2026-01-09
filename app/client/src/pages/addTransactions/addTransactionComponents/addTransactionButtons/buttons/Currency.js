@@ -1,19 +1,13 @@
-import { SelectButtonCreate } from '../../../index.js';
-
-const ButtonData = [
-  {  value: 'income', icon: '📥', text: 'Income' },
-  {  value: 'expense', icon: '📤', text: 'Expense' },
-];
+import { SelectButtonCreate, CurrencyButtonData } from '../../../index.js';
 
 const ButtonConfig = {
-  categoryName: "Currency",
+  categoryName: "Currency*",
   buttonId: "detailsCurrency",
 };
 
-
 const CurrencyButton = {
   render() {
-    return SelectButtonCreate.render(ButtonData, ButtonConfig);
+    return SelectButtonCreate.render(CurrencyButtonData, ButtonConfig);
   },
 
   getValue() {
