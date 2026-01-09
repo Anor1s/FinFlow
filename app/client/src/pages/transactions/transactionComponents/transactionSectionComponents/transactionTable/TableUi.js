@@ -10,7 +10,7 @@ const TableUi = {
           id="all-transactions-table">
         </ul>
           ${withPagination 
-          ? '<div id="pagination-container"></div>' 
+          ? '<div class="h-button" id="pagination-container"></div>' 
           : ''}
       </div>
     `;

@@ -30,8 +30,8 @@ window.addEventListener('load', () => {
 
     setTimeout(() => {
       preloader.remove();
-    }, 0); // 500
-  }, 0); // 300
+    }, 500); // 500
+  }, 300); // 300
 });
 
 function renderAppLayout(title = 'FinFlow') {

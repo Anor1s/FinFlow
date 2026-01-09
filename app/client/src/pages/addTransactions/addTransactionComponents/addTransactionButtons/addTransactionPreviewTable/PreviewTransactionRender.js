@@ -12,6 +12,17 @@ const DetailButtonsRender = {
     note: '',
   },
 
+  getCurrencySymbol(currencyCode) {
+    let displaySymbol = '';
+    switch (currencyCode?.toUpperCase()) {
+      case 'USD': displaySymbol = '$'; break;
+      case 'UAH': displaySymbol = '₴'; break;
+      case 'EUR': displaySymbol = '€'; break;
+      default: displaySymbol = currencyCode || '';
+    }
+    return displaySymbol;
+  },
+
   updatePreview() {
     const previewElement = document.querySelector('[data-preview-transaction]');
 
@@ -34,7 +45,7 @@ const DetailButtonsRender = {
 
     categorySection.innerHTML = `
       ${data.category.icon ?
-          `<img 
+      `<img 
             class="icon"
             src="${data.category.icon}" 
             alt="${data.category} icon"
@@ -42,7 +53,7 @@ const DetailButtonsRender = {
             height="24"
             loading="lazy"
           />` :  ''
-        }
+    }
       <span class="text-text-tertiary text-base mobile:text-lg laptop:text-xl">
         ${data.category.text}
       </span>
@@ -70,14 +81,19 @@ const DetailButtonsRender = {
     }
 
     if (data.currency) {
+      const currencySymbol = this.getCurrencySymbol(data.currency);
       parts.push(`
-        <span class="text-text-tertiary text-base mobile:text-lg laptop:text-xl">${data.currency}</span>
+        <span class="text-text-tertiary text-base mobile:text-lg laptop:text-xl">
+          ${currencySymbol}
+        </span>
       `);
     }
 
     if (data.amount) {
       parts.push(`
-        <span class="text-text-tertiary text-base mobile:text-lg laptop:text-xl">${data.amount}</span>
+        <span class="text-text-tertiary text-base mobile:text-lg laptop:text-xl">
+          ${data.amount}
+        </span>
       `);
     }
 
@@ -135,7 +151,6 @@ const DetailButtonsRender = {
         this.updatePreview();
       }
     });
-
   }
 };
 

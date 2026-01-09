@@ -1,4 +1,4 @@
-import { Debounce, ErrorIcon } from "../index.js";
+import { Debounce, ErrorIcon, Dialog } from "../index.js";
 
 const Form = {
   render(formId, formParts) {
@@ -118,7 +118,7 @@ const Form = {
         try {
           await onSubmit(formData);
         } catch (error) {
-          alert(error.message);
+          Dialog.alert(error.message);
         }
       }
     });
