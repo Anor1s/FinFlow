@@ -5,62 +5,41 @@ import {
 } from '../../../index.js';
 
 const TransactionTable = {
-  currentPage: 0,
+  currentPage: 1,
   itemsPerPage: 0,
   totalPages: 0,
-  originalData: [],
-  filteredData: [],
+  data: [],
 
   render() {
     return TableUi.renderMainLayout();
   },
 
   applyFilters() {
-    const filters = FilterButtonsGetData();
-    const searchQuery = SearchBar.getValue() ? SearchBar.getValue().toLowerCase().trim() : "";
-
-    this.filteredData = this.originalData.filter(transaction => {
-      if (TableLogic.isFilteredOut(transaction, filters)) return false;
-
-      if (searchQuery) {
-        const searchableFields = [
-          transaction.category || '',
-          transaction.place || '',
-          transaction.note || '',
-          transaction.amount?.toString() || ''
-        ];
-        return searchableFields.some(field => field.toLowerCase().includes(searchQuery));
-      }
-      return true;
-    });
-
-    this.filteredData = TableLogic.applySort(this.filteredData, SortByButtonsGetData());
-    this.rebuildTable();
+    this.refreshTableData();
   },
 
-  rebuildTable() {
+  async rebuildTable() {
     const table = document.getElementById('all-transactions-table');
     if (!table) return;
 
-    this.currentPage = 0;
-    this.itemsPerPage = TablePagination.calculateItemsPerPage(table);
-    this.totalPages = Math.ceil(this.filteredData.length / this.itemsPerPage);
-    this.updateView();
+    const newItemsPerPage = TablePagination.calculateItemsPerPage(table);
+
+    if (newItemsPerPage !== this.itemsPerPage && newItemsPerPage > 0) {
+      this.itemsPerPage = newItemsPerPage;
+      await this.loadPage(this.currentPage);
+    }
   },
 
   updateView() {
     const table = document.getElementById('all-transactions-table');
     if (!table) return;
 
-    const currentPageData = TablePagination.getPageSlice(this.filteredData, this.currentPage, this.itemsPerPage);
-
     const currentCurrency = AppStore.currentCurrency;
-
-    TableUi.renderData(table, currentPageData, currentCurrency);
+    TableUi.renderData(table, this.data, currentCurrency);
 
     const paginationContainer = document.getElementById('pagination-container');
     if (paginationContainer) {
-      paginationContainer.innerHTML = TableUi.renderPagination(this.totalPages, this.currentPage);
+      paginationContainer.innerHTML = TableUi.renderPagination(this.totalPages, this.currentPage - 1);
     }
   },
 
@@ -75,32 +54,42 @@ const TransactionTable = {
 
       try {
         await AppStore.fetchInitialCurrency();
-        await this.refreshTableData();
+        this.itemsPerPage = TablePagination.calculateItemsPerPage(table);
+        await this.loadPage(1);
         this.setupEventListeners();
       } catch (error) {
-        console.error("[Table] Initialization error:", error);
+        console.error("[Table] Init error:", error);
         table.innerHTML = `<li class="p-10 text-center text-red-400">Error loading data.</li>`;
       }
     });
   },
 
-  async refreshTableData() {
+  async loadPage(page) {
+    this.currentPage = page;
     const table = document.getElementById('all-transactions-table');
+
     if (table) {
-      table.innerHTML = `<li class="text-center p-10 text-text-secondary animate-pulse">Оновлення даних...</li>`;
+      table.innerHTML = `<li class="text-center p-10 text-text-secondary animate-pulse">Завантаження...</li>`;
     }
 
     try {
-      if (TransactionStore.clear) TransactionStore.clear();
+      const response = await TransactionStore.fetchTransactions(this.currentPage, this.itemsPerPage);
 
-      const newData = await TransactionStore.fetchTransactions();
-
-      this.originalData = newData || [];
-
-      this.applyFilters();
+      if (response) {
+        this.data = response.transactions;
+        this.totalPages = response.pagination.totalPages;
+        this.updateView();
+      }
     } catch (error) {
-      console.error("[Table] Refresh error:", error);
+      console.error("[Table] Load error:", error);
     }
+  },
+
+  async refreshTableData() {
+    if (TransactionStore.clearCache) {
+      TransactionStore.clearCache();
+    }
+    await this.loadPage(1);
   },
 
   setupEventListeners() {
@@ -111,9 +100,7 @@ const TransactionTable = {
 
   searchBarEventListeners() {
     const searchInput = document.getElementById('search-input');
-
     if (searchInput) {
-      searchInput.removeEventListener('input', this.handleSearch);
       searchInput.addEventListener('input', () => {
         this.applyFilters();
       });
@@ -122,20 +109,25 @@ const TransactionTable = {
 
   paginationEventListeners() {
     const paginationContainer = document.getElementById('pagination-container');
-    paginationContainer?.addEventListener('click', (e) => {
+    paginationContainer?.addEventListener('click', async (e) => {
       const btn = e.target.closest('button');
       if (!btn) return;
+
       const action = btn.dataset.action;
-      if (action === 'prev' && this.currentPage > 0) this.currentPage--;
-      else if (action === 'next' && this.currentPage < this.totalPages - 1) this.currentPage++;
-      else if (action === 'page') this.currentPage = parseInt(btn.dataset.page);
-      this.updateView();
+      let targetPage = this.currentPage;
+
+      if (action === 'prev' && this.currentPage > 1) targetPage--;
+      else if (action === 'next' && this.currentPage < this.totalPages) targetPage++;
+      else if (action === 'page') targetPage = parseInt(btn.dataset.page) + 1;
+
+      if (targetPage !== this.currentPage) {
+        await this.loadPage(targetPage);
+      }
     });
 
-    let resizeTimeout;
     window.addEventListener("resize", () => {
-      clearTimeout(resizeTimeout);
-      resizeTimeout = setTimeout(() => this.rebuildTable(), 200);
+      clearTimeout(this.resizeTimeout);
+      this.resizeTimeout = setTimeout(() => this.rebuildTable(), 200);
     });
   },
 
@@ -148,9 +140,8 @@ const TransactionTable = {
 
       if (transactionRow) {
         const transactionId = transactionRow.id;
-
-        const transactionData = this.originalData.find(
-          transaction => String(transaction.id) === String(transactionId)
+        const transactionData = this.data.find(
+          t => String(t.id) === String(transactionId)
         );
 
         if (transactionData) {
@@ -175,4 +166,5 @@ window.updateTransactionSort = () => {
 };
 
 window.TransactionList = TransactionTable;
+
 export default TransactionTable;

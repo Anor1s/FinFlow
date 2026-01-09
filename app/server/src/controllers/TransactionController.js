@@ -5,40 +5,50 @@ exports.getAllTransactions = async (req, res) => {
   try {
     const userId = req.user.id;
 
-    const query = `
-        SELECT
-            id,
-            amount,
-            currency,
-            amount_base,
-            exchange_rate,
-            category,
-            transaction_date as date, 
-        transaction_time as time, 
-        transaction_type as "transactionType", 
-        transaction_place as place, 
-        note
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 20;
+    const offset = (page - 1) * limit;
+
+    const dataQuery = `
+        SELECT id, amount, currency, amount_base, exchange_rate, category,
+               transaction_date as date, transaction_time as time, 
+               transaction_type as "transactionType", transaction_place as place, note
         FROM transactions
         WHERE user_id = $1
         ORDER BY transaction_date DESC, transaction_time DESC
+        LIMIT $2 OFFSET $3
     `;
 
-    const result = await pool.query(query, [userId]);
+    const countQuery = `SELECT COUNT(*) FROM transactions WHERE user_id = $1`;
+
+    const [result, countResult] = await Promise.all([
+      pool.query(dataQuery, [userId, limit, offset]),
+      pool.query(countQuery, [userId])
+    ]);
+
+    const totalCount = parseInt(countResult.rows[0].count);
+    const totalPages = Math.ceil(totalCount / limit);
 
     const formattedData = result.rows.map(item => ({
       ...item,
       amount: parseFloat(item.amount),
       amount_base: parseFloat(item.amount_base),
-      // Formatting date to YYYY-MM-DD
       date: item.date ? new Date(item.date).toISOString().split('T')[0] : null,
-      // Formatting time to HH:mm
       time: item.time ? item.time.substring(0, 5) : null
     }));
 
-    res.json(formattedData);
+    res.json({
+      transactions: formattedData,
+      pagination: {
+        totalCount,
+        totalPages,
+        currentPage: page,
+        limit
+      }
+    });
   } catch (err) {
     console.error("GET_TRANSACTIONS_ERROR:", err.message);
-    res.status(500).json({ error: 'Server error while retrieving transactions' });
+    res.status(500).json({ error: 'Server error' });
   }
 };
 
