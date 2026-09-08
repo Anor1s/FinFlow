@@ -1,4 +1,4 @@
-import { AsideNavItem, MenuItemsData } from '../../Index.js';
+import { AsideNavItem, MenuItemsData } from '../../index.js';
 
 const MenuList = {
   render() {

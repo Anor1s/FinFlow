@@ -1,4 +1,4 @@
-import  { AsideLogo, AsideNav } from './Index.js';
+import  { AsideLogo, AsideNav } from './index.js';
 
 
 const Aside = {
