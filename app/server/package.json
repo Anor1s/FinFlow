@@ -4,7 +4,7 @@
   "main": "Server.js",
   "scripts": {
     "start": "node Server.js",
-    "dev": "node --watch Server1.js"
+    "dev": "node --watch Server.js"
   },
   "author": "Anor1s",
   "dependencies": {
