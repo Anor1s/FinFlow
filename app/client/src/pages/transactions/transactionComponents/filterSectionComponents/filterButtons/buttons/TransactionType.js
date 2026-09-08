@@ -1,12 +1,9 @@
 import { SelectButtonCreate, TransactionTypeButtonData } from '../../../../index.js';
 
-
-
 const ButtonConfig = {
   categoryName: "Transaction Type",
   buttonId: "filterTransactionType",
 };
-
 
 const TransactionTypeButton = {
   render() {

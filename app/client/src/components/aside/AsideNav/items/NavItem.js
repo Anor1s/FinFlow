@@ -1,11 +1,25 @@
+import Routes from '../../../../router/Routes.js'
+import Auth from '../../../../router/Auth.js'
+
 const NavItem = {
   render(item) {
+
+    let itemClasses = 'group gradient-hover'
+
+    if (!Auth.isAuthenticated()) {
+      if (Object.keys(Routes).includes(item.href)) {
+        if (Routes[item.href].requiresAuth === true) {
+          itemClasses = 'opacity-45 select-none cursor-not-allowed'
+        }
+      }
+    }
+    
     return `
-      <li class="w-full">
+      <li class="w-full ">
         <a 
           href="${item.href}" 
-          class="group flex justify-center laptop:justify-start items-center p-[8px] rounded-lg pointer w-full
-                gradient-hover laptop:gap-sm desktop:gap-[16px]" 
+          class=" flex justify-center laptop:justify-start items-center p-[8px] rounded-lg pointer w-full
+                 laptop:gap-sm desktop:gap-[16px] ${itemClasses}" 
           data-link
           >
           <img

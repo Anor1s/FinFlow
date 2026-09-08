@@ -1,154 +1,93 @@
-import { Dashboard, Analytics, Transactions, AddTransaction, Reports, Settings, Profile } from './index.js';
+import {
+  Routes,
+  Cache,
+  Auth,
+  Ui
+} from './index.js';
 
-const routes = {
-  '/': { component: Profile, title: 'Profile' },
-  '/overview': { component: Dashboard, title: 'Dashboard Overview' },
-  '/analytics': { component: Analytics, title: 'Analytics' },
-  '/transactions': { component: Transactions, title: 'Transactions' },
-  '/add-transaction': { component: AddTransaction, title: 'Add Transaction' },
-  '/reports': { component: Reports, title: 'Reports' },
-  '/settings': { component: Settings, title: 'Settings' },
-  '/profile': { component: Profile, title: 'Profile' }
+const Router = {
+  currentPath: null,
+  VITE_BASE_PATH: (import.meta.env.BASE_URL || '').replace(/\/$/, ''),
+
+  init() {
+    window.addEventListener('popstate', () => this.handleRouteChange());
+
+    document.addEventListener('click', (e) => {
+      const link = e.target.closest('[data-link]');
+      if (link) {
+        e.preventDefault();
+        this.navigateTo(link.getAttribute('href'));
+      }
+    });
+
+    this.handleRouteChange();
+  },
+
+  navigateTo(path) {
+    let targetPath = path;
+
+    if (Routes[path]?.requiresAuth && !Auth.isAuthenticated()) {
+      targetPath = '/profile';
+    }
+
+    const fullPath = `${this.VITE_BASE_PATH}${targetPath}`;
+
+    if (window.location.pathname === fullPath && this.currentPath === targetPath) return;
+
+    window.history.pushState(null, null, fullPath);
+    this.handleRouteChange();
+  },
+
+  handleRouteChange() {
+    let path = window.location.pathname;
+    if (path.startsWith(this.VITE_BASE_PATH)) {
+      path = path.substring(this.VITE_BASE_PATH.length) || '/';
+    }
+
+    let route = Routes[path];
+
+    if (!route) {
+      const fallback = Auth.isAuthenticated() ? '/overview' : '/profile';
+      this.navigateTo(fallback);
+      return;
+    }
+
+    if (route.requiresAuth && !Auth.isAuthenticated()) {
+      console.warn('Access restricted: auth required');
+      this.navigateTo('/profile');
+      return;
+    }
+
+    if (this.currentPath === path) return;
+
+    const previousPath = this.currentPath;
+    this.currentPath = path;
+
+    Ui.updateHeaderTitle(route.title);
+    const mainContent = document.getElementById('main-content');
+
+    if (Cache.has(path)) {
+      mainContent.innerHTML = Cache.get(path);
+      Cache.updateQueue(path);
+    } else {
+      const content = route.component.render();
+      mainContent.innerHTML = content;
+      Cache.add(path, content);
+    }
+
+    if (route.component.init) {
+      route.component.init();
+    }
+
+    Ui.updateActiveLink(path);
+    document.title = `${route.title} | FinFlow`;
+
+    if (previousPath && !Cache.has(previousPath)) {
+      window.requestIdleCallback(() => {
+        Cache.saveComponentSafely(previousPath, Routes[previousPath]?.component);
+      });
+    }
+  }
 };
 
-const pageCache = new Map();
-const MAX_CACHE_SIZE = 7;
-const cacheQueue = [];
-
-const componentCache = new Map();
-
-let currentPage = null;
-let currentPath = null;
-
-export function initRouter() {
-  window.addEventListener('popstate', handleRouteChange);
-  handleRouteChange();
-}
-
-export function navigateTo(path) {
-  const route = routes[path];
-  if (route) {
-    window.history.pushState(null, null, path);
-    handleRouteChange();
-    updateActiveLink(path);
-  }
-}
-
-function handleRouteChange() {
-  const path = window.location.pathname;
-
-  if (currentPath === path) return;
-
-  const previousPath = currentPath;
-  currentPath = path;
-
-  const route = routes[path] || routes['/'];
-  const PageComponent = route.component;
-  const pageTitle = route.title;
-
-  updateHeaderTitle(pageTitle);
-
-  const mainContent = document.getElementById('main-content');
-
-  if (pageCache.has(path)) {
-    mainContent.innerHTML = pageCache.get(path);
-    updateCacheQueue(path);
-  } else {
-    const renderedContent = PageComponent.render();
-    mainContent.innerHTML = renderedContent;
-    addToCache(path, renderedContent);
-  }
-
-  if (PageComponent.init) {
-    PageComponent.init();
-  }
-
-  currentPage = PageComponent;
-  updateActiveLink(path);
-  document.title = `${pageTitle} | FinFlow`;
-
-  if (previousPath && !pageCache.has(previousPath)) {
-    requestIdleCallback(() => cachePageSafely(previousPath));
-  }
-}
-
-
-function cachePageSafely(path) {
-  componentCache.set(path, routes[path]?.component);
-}
-
-function addToCache(path, content) {
-  if (cacheQueue.length >= MAX_CACHE_SIZE) {
-    const oldestPath = cacheQueue.shift();
-    pageCache.delete(oldestPath);
-  }
-
-  pageCache.set(path, content);
-  cacheQueue.push(path);
-}
-
-function updateCacheQueue(path) {
-  const index = cacheQueue.indexOf(path);
-  if (index > -1) {
-    cacheQueue.splice(index, 1);
-    cacheQueue.push(path);
-  }
-}
-
-export function clearCache() {
-  pageCache.clear();
-  cacheQueue.length = 0;
-  componentCache.clear();
-}
-
-export function getCacheStats() {
-  return {
-    renderedPages: pageCache.size,
-    maxSize: MAX_CACHE_SIZE,
-    paths: [...pageCache.keys()],
-    queue: [...cacheQueue]
-  };
-}
-
-function updateHeaderTitle(title) {
-  const header = document.querySelector('header');
-  if (header) {
-    const titleElement = header.querySelector('h2');
-    if (titleElement) {
-      titleElement.textContent = title;
-    }
-  }
-}
-
-function updateActiveLink(currentPath) {
-  document.querySelectorAll('[data-link]').forEach(link => {
-    link.classList.remove('active');
-  });
-  document.querySelectorAll('[data-icon-link]').forEach(link => {
-    link.classList.remove('active-icon');
-  });
-
-  const activeLink = document.querySelector(`[data-link][href="${currentPath}"]`);
-  if (activeLink) {
-    activeLink.classList.add('active');
-    const activeIcon = activeLink.querySelector('[data-icon-link]');
-    if (activeIcon) {
-      activeIcon.classList.add('active-icon');
-    }
-  }
-}
-
-if (!window.requestIdleCallback) {
-  window.requestIdleCallback = function(cb) {
-    const start = Date.now();
-    return setTimeout(function() {
-      cb({
-        didTimeout: false,
-        timeRemaining: function() {
-          return Math.max(0, 50 - (Date.now() - start));
-        }
-      });
-    }, 1);
-
-  };
-}
+export default Router;

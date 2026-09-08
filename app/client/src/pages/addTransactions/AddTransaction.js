@@ -7,7 +7,7 @@ const AddTransactions = {
   render() {
     return PageTemplate.render([
       AddTransactionDetails.render()
-    ]);
+    ], false);
   },
 
   init() {

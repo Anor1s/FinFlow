@@ -4,11 +4,13 @@ const PaginationButtonsList = {
       <ul class="h-button w-full flex flex-row justify-between items-center" data-pagination="true">
         <li class="h-full w-[40px] laptop:w-[45px]">
           <button
-            class="h-full w-full flex items-center justify-center bg-surface hover:bg-surface-response rounded transition-colors duration-200 ${this.currentPage === 0 ? 'opacity-50 cursor-not-allowed' : ''}"
+            class="h-full w-full flex items-center justify-center bg-surface 
+                  hover:bg-surface-response rounded transition-colors duration-200 
+                  ${this.currentPage === 0 ? 'opacity-50 cursor-not-allowed' : ''}"
             type="button"
             data-action="prev"
             ${this.currentPage === 0 ? 'disabled' : ''}
-            aria-label="Попередня сторінка"
+            aria-label="Previous page"
           >
             <svg
               class="w-5 h-5 text-text-primary transition-transform duration-200"
@@ -28,11 +30,13 @@ const PaginationButtonsList = {
         
         <li class="h-full w-[40px] laptop:w-[45px]">
           <button
-            class="h-full w-full flex items-center justify-center bg-surface hover:bg-surface-response rounded transition-colors duration-200 ${this.currentPage >= this.totalPages - 1 ? 'opacity-50 cursor-not-allowed' : ''}"
+            class="h-full w-full flex items-center justify-center bg-surface 
+                  hover:bg-surface-response rounded transition-colors duration-200 
+                  ${this.currentPage >= this.totalPages - 1 ? 'opacity-50 cursor-not-allowed' : ''}"
             type="button"
             data-action="next"
             ${this.currentPage >= this.totalPages - 1 ? 'disabled' : ''}
-            aria-label="Наступна сторінка"
+            aria-label="Next page"
           >
             <svg
               class="w-5 h-5 text-text-primary transition-transform duration-200"

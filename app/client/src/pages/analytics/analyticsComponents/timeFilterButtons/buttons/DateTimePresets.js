@@ -1,12 +1,13 @@
-import { SelectButtonCreate } from "../../../index.js";
+import { SelectButtonCreate, DateTimePresetManager } from "../../../index.js";
+
 
 const ButtonData = [
-  {  value: 'today', text: 'Today' },
-  {  value: 'yesterday', text: 'Yesterday' },
-  {  value: 'lastWeek', text: 'Last Week' },
-  {  value: 'lastMonth', text: 'Last Month' },
-  {  value: 'lastYear', text: 'Last Year' },
-  {  value: 'allTime', text: 'All Time' },
+  { value: 'today', text: '0 - Today' },
+  { value: 'yesterday', text: '1 - Yesterday' },
+  { value: 'lastWeek', text: '7 - Last Week' },
+  { value: 'lastMonth', text: '30 - Last Month' },
+  { value: 'lastYear', text: '365 - Last Year' },
+  { value: 'allTime', text: 'All Time' },
 ];
 
 const ButtonConfig = {
@@ -14,14 +15,39 @@ const ButtonConfig = {
   buttonId: "analyticsDateTimePresets",
 };
 
-
 const DateTimePresetsButton = {
+  _isListenerSetup: false,
+
   render() {
-    return SelectButtonCreate.render(ButtonData, ButtonConfig);
+    return `
+      <div id="${ButtonConfig.buttonId}">
+        ${SelectButtonCreate.render(ButtonData, ButtonConfig)}
+      </div>
+    `;
+  },
+
+  init() {
+    if (this._isListenerSetup) return;
+
+    document.addEventListener('click', (e) => {
+      const container = e.target.closest(`#${ButtonConfig.buttonId}`);
+      if (!container) return;
+
+      const option = e.target.closest('[data-value]');
+      if (option) {
+        const val = option.getAttribute('data-value');
+
+
+        DateTimePresetManager.handlePresetChange(val);
+      }
+    });
+
+    this._isListenerSetup = true;
   },
 
   getValue() {
-    return SelectButtonCreate.getValue(ButtonConfig.buttonId).value;
+    const res = SelectButtonCreate.getValue(ButtonConfig.buttonId);
+    return res ? res.value : '';
   }
 };
 

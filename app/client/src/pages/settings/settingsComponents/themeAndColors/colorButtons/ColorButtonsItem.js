@@ -1,7 +1,7 @@
 const ColorButtonsItem = {
   render(button) {
     return `
-      <li class="h-[40px] w-[40px]">
+      <li class="my-auto h-[30px] w-[30px]">
         ${button.render()}  
       </li>
     `

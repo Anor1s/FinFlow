@@ -14,6 +14,10 @@ const CashStatus = {
         </div> 
       </section>
     `;
+  },
+
+  init() {
+    CardsList.init();
   }
 };
 export default CashStatus;

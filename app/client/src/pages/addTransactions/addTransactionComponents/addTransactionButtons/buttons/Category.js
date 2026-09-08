@@ -1,7 +1,7 @@
 import { SelectButtonCreate, CategoryButtonData } from '../../../index.js';
 
 const ButtonConfig = {
-  categoryName: "Category",
+  categoryName: "Category*",
   buttonId: "detailsCategory",
 };
 

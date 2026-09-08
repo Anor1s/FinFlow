@@ -3,8 +3,11 @@ const ThemeButtons = {
     return `
       <div class="flex flex-col gap-xs w-full">
         <span class="" id="theme-label">Theme</span> 
-        <ul class="flex flex-row gap-sm bg-surface w-full px-[8px] mobile:px-[16px] py-[8px] rounded" role="group" aria-labelledby="theme-label">
-          <li class="h-[40px] w-[40px]">
+        <ul 
+          class="flex flex-row gap-sm bg-surface w-full px-[8px] mobile:px-[16px] h-button rounded" 
+          role="group" 
+          aria-labelledby="theme-label">
+          <li class="my-auto h-[30px] w-[30px]">
             <button
               class="h-full w-full theme-button theme-active border-3 rounded-full text-black border-black"
               id="dark-theme-button"
@@ -16,7 +19,7 @@ const ThemeButtons = {
             </button>
           </li>
     
-          <li class="h-[40px] w-[40px]">
+          <li class="my-auto h-[30px] w-[30px]">
             <button
               class="h-full w-full theme-button border-3 rounded-full text-white border-white"
               id="light-theme-button"

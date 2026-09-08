@@ -18,6 +18,11 @@ export { default as TransportIcon } from '../../assets/icons/transaction/categor
 export { default as TravelIcon } from '../../assets/icons/transaction/categories/Travel.svg'
 export { default as HousingIcon } from '../../assets/icons/transaction/categories/Housing.svg'
 
+// Currency Icons
+export { default as DollarIcon } from '../../assets/icons/transaction/currency/Dollar.svg'
+export { default as EuroIcon } from '../../assets/icons/transaction/currency/Euro.svg'
+export { default as HryvniaIcon } from '../../assets/icons/transaction/currency/Hryvnia.svg'
+
 // Transaction Type Icons
 export { default as IncomeIcon } from '../../assets/icons/transaction/type/Income.svg'
 export { default as ExpenseIcon } from '../../assets/icons/transaction/type/Expense.svg'

@@ -1,13 +1,9 @@
-import { Chart, ChartsTemplate, getChartStyles } from './index.js';
-
-const allMonths = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-const allIncome = [1200, 1900, 1500, 1800, 2200, 2000, 2400, 2100, 2300, 2500, 2200, 2800];
-const allExpenses = [800, 1200, 1000, 1100, 1400, 1300, 1500, 1200, 1400, 1600, 1300, 1700];
-const allSavings = [500, 100, 300, 600, 1400, 1300, 200, 1200, 1400, 1000, 800, 1100];
+import { Chart, ChartsTemplate, getChartStyles, ChartStore, FilterButtonsGetData, AppStore } from '../index.js';
 
 const StackedBarChartCreate = {
   chart: null,
   chartWidth: 0,
+  localData: { labels: [], income: [], expenses: [], savings: [] },
 
   render(chartId) {
     return ChartsTemplate.render(chartId);
@@ -15,6 +11,7 @@ const StackedBarChartCreate = {
 
   createBackgroundPlugin() {
     return {
+      id: 'customBarBackground',
       afterDatasetsDraw(chart) {
         const ctx = chart.ctx;
         const yAxis = chart.scales.y;
@@ -22,17 +19,14 @@ const StackedBarChartCreate = {
 
         chart.data.datasets.forEach((dataset, datasetIndex) => {
           const meta = chart.getDatasetMeta(datasetIndex);
-
           meta.data.forEach((datapoint) => {
             const x = datapoint.x;
             const width = datapoint.width;
-
             const yTop = yAxis.getPixelForValue(0);
             const yBottom = yAxis.getPixelForValue(chart.scales.y.max);
 
             ctx.fillStyle = `${styles.color}15`;
             ctx.fillRect(x - width / 2, yTop, width, yBottom - yTop);
-
             ctx.strokeStyle = `${styles.border}30`;
             ctx.lineWidth = 1;
             ctx.strokeRect(x - width / 2, yTop, width, yBottom - yTop);
@@ -42,41 +36,30 @@ const StackedBarChartCreate = {
     };
   },
 
-  // Нова функція для визначення кількості місяців на основі ширини
   getMonthsToShow(width) {
-    if (width >= 380) {
-      return 12;
-    } else if (width >= 300) {
-      return 9;
-    } else {
-      return 6;
-    }
+    if (width >= 380) return 12;
+    if (width >= 300) return 9;
+    return 6;
   },
 
-  getChartOptions(isLaptopOrLarger) {
+  getChartOptions() {
     const styles = getChartStyles();
+    const currency = ChartsTemplate.getCurrencySymbol();
 
     return {
       responsive: true,
       maintainAspectRatio: false,
-      interaction: {
-        mode: 'index',
-        intersect: false,
-      },
-      layout: {},
+      interaction: { mode: 'index', intersect: false },
       plugins: {
         legend: {
           display: true,
           position: 'bottom',
-          align: 'center',
-          fullSize: true,
           labels: {
             padding: 16,
             boxWidth: 16,
-            boxHeight: 16,
             font: {
               family: styles.fontFamily,
-              size: styles.fontSizeMain,
+              size: styles.fontSizeMain
             },
             color: styles.color,
           },
@@ -84,65 +67,65 @@ const StackedBarChartCreate = {
         tooltip: {
           enabled: true,
           padding: 16,
-          caretSize: 8,
-          cornerRadius: 8,
+          backgroundColor: styles.backgroundColor,
+          titleColor: styles.color,
+          bodyColor: styles.color,
+          footerColor: styles.color,
+          borderColor: styles.border,
           bodyFont: {
             family: styles.fontFamily,
-            size: 16,
-            weight: 'normal'
+            size: 16
           },
           titleFont: {
             family: styles.fontFamily,
             size: 20,
             weight: 'bold'
           },
-          backgroundColor: styles.backgroundColor,
-          bodyColor: styles.color,
-          borderColor: styles.border,
+          footerFont: {
+            family: styles.fontFamily,
+            size: 16,
+            weight: 'bold'
+          },
           borderWidth: 2,
           displayColors: true,
-          usePointStyle: true,
+          boxPadding: 6,
+          usePointStyle: false,
+
           callbacks: {
-            title: function(context) {
-              return context[0].label;
-            },
-            label: function(context) {
-              return '';
-            },
-            afterBody: function(context) {
-              const tooltipContext = context[0];
-              const dataIndex = tooltipContext.dataIndex;
-              const chart = tooltipContext.chart;
+            title: (context) => context[0].label,
+            label: (context) => {
+              const dataIndex = context.dataIndex;
+              const chart = context.chart;
               const datasets = chart.data.datasets;
+              const currency = ChartsTemplate.getCurrencySymbol();
 
-              let total = 0;
-              const values = [];
-
-              datasets.forEach((dataset, index) => {
-                const value = dataset.data[dataIndex];
-                if (typeof value === 'number') {
-                  total += value;
-                  values.push({
-                    label: dataset.label,
-                    value: value,
-                    datasetIndex: index
-                  });
-                }
+              let totalSum = 0;
+              datasets.forEach(ds => {
+                totalSum += parseFloat(ds.data[dataIndex]) || 0;
               });
 
-              const lines = values.map(item => {
-                const percentage = total > 0 ? ((item.value / total) * 100).toFixed(2) : 0;
-                return `${item.label}: ${item.value} (${percentage}%)`;
+              const value = parseFloat(context.parsed.y) || 0;
+              const label = context.dataset.label || '';
+
+              const percentage = totalSum > 0
+                ? ((value / totalSum) * 100).toFixed(1)
+                : "0.0";
+
+              return `${label}: ${currency} ${value.toLocaleString('ua-UA', { minimumFractionDigits: 2 })} (${percentage}%)`;
+            },
+            footer: (context) => {
+              const dataIndex = context[0].dataIndex;
+              const datasets = context[0].chart.data.datasets;
+              const currency = ChartsTemplate.getCurrencySymbol();
+
+              let totalSum = 0;
+              datasets.forEach(ds => {
+                totalSum += parseFloat(ds.data[dataIndex]) || 0;
               });
 
-              lines.push(`Total: ${total}`);
-              return lines;
+              return `\nTotal: ${totalSum.toLocaleString('ua-UA', { minimumFractionDigits: 2 })} ${currency}`;
             }
-          },
-          xAlign: 'center',
-          yAlign: 'top',
-          caretPadding: 40,
-          position: 'nearest',
+          }
         }
       },
       scales: {
@@ -155,7 +138,7 @@ const StackedBarChartCreate = {
             color: styles.color,
             font: {
               family: styles.fontFamily,
-              size: styles.fontSizeMain,
+              size: styles.fontSizeMain
             }
           }
         },
@@ -163,52 +146,60 @@ const StackedBarChartCreate = {
           stacked: true,
           beginAtZero: true,
           grid: {
-            color: `${styles.color}30`,
+            color: `${styles.color}30`
           },
           ticks: {
             color: styles.color,
-            font: {
-              family: styles.fontFamily,
-              size: styles.fontSizeMain,
-            },
-            callback: function(value) {
-              return value;
-            }
+            font: { family: styles.fontFamily, size: styles.fontSizeMain },
+            callback: (value) => `${currency} ${value}`
           }
         }
       },
     };
   },
 
-  init(chartId) {
+  async refreshChartData() {
+    await this.updateChart(true);
+  },
 
+  async updateChart(forceRefresh = false) {
+    await ChartsTemplate.fetchAndRefresh(this, forceRefresh, (rawData) => {
+      const stats = rawData?.monthlyStats || [];
+
+      const monthsToShow = this.getMonthsToShow(this.chartWidth);
+      const displayData = stats.slice(0, monthsToShow);
+
+      return {
+        labels: displayData.map(d => d.month),
+        datasets: [
+          displayData.map(d => d.income),
+          displayData.map(d => d.expenses),
+          displayData.map(d => d.savings)
+        ]
+      };
+    });
+  },
+
+
+  barStyle(styles, type) {
+    return {
+      data: [],
+      borderColor: styles[`${type}Border`],
+      backgroundColor: styles[`${type}Surface`],
+      borderWidth: 2,
+      hoverBorderColor: styles.color
+    };
+  },
+
+  async init(chartId) {
     const ctx = document.getElementById(chartId);
-
     if (!ctx) return;
+
+    const container = ctx.parentElement;
+    this.chartWidth = container?.clientWidth || 0;
 
     if (this.chart) {
       this.chart.destroy();
-      this.chart = null;
-    }
-
-    const container = ctx.parentElement;
-    if (!container) return;
-
-    // Отримуємо поточну ширину контейнера
-    const containerWidth = container.clientWidth;
-    this.chartWidth = containerWidth;
-
-    // Визначаємо кількість місяців на основі ширини
-    const monthsToShow = this.getMonthsToShow(containerWidth);
-
-    const displayMonths = allMonths.slice(0, monthsToShow);
-    const displayIncome = allIncome.slice(0, monthsToShow);
-    const displayExpenses = allExpenses.slice(0, monthsToShow);
-    const displaySavings = allSavings.slice(0, monthsToShow);
-
-    if (this.chart) {
-      this.updateChart(monthsToShow);
-      return;
     }
 
     const styles = getChartStyles();
@@ -216,116 +207,53 @@ const StackedBarChartCreate = {
     this.chart = new Chart(ctx, {
       type: 'bar',
       data: {
-        labels: displayMonths,
+        labels: [],
         datasets: [
           {
             label: 'Income',
-            data: displayIncome,
-            backgroundColor: styles.incomeSurface,
-            borderColor: styles.incomeBorder,
-            borderWidth: 2,
-            hoverBorderWidth: 3,
-            hoverBorderColor: styles.color
+            ...this.barStyle(styles, 'income'),
           },
           {
             label: 'Expenses',
-            data: displayExpenses,
-            backgroundColor: styles.expenseSurface,
-            borderColor: styles.expenseBorder,
-            borderWidth: 2,
-            hoverBorderWidth: 3,
-            hoverBorderColor: styles.color
+            ...this.barStyle(styles, 'expense'),
           },
           {
             label: 'Savings',
-            data: displaySavings,
-            backgroundColor: styles.savingsSurface,
-            borderColor: styles.savingsBorder,
-            borderWidth: 2,
-            hoverBorderWidth: 3,
-            hoverBorderColor: styles.color
+            ...this.barStyle(styles, 'savings'),
           }
         ]
       },
-      options: this.getChartOptions(containerWidth >= 500),
+      options: this.getChartOptions(),
       plugins: [this.createBackgroundPlugin()]
     });
 
+    ChartsTemplate.subscribeRefresh(() => this.updateChart(true));
 
-    this.setupResizeObserver(container, chartId);
+    this.setupResizeObserver(container);
+    window.StackedBarChartInstance = this;
+
+    await this.updateChart();
   },
 
-  setupResizeObserver(container, chartId) {
-    // Перевіряємо підтримку ResizeObserver
-    if (typeof ResizeObserver !== 'undefined') {
-      const resizeObserver = new ResizeObserver((entries) => {
-        for (let entry of entries) {
-          const newWidth = entry.contentRect.width;
+  setupResizeObserver(container) {
+    if (!container) return;
+    const resizeObserver = new ResizeObserver((entries) => {
+      for (let entry of entries) {
+        const newWidth = entry.contentRect.width;
 
-          // Оновлюємо лише якщо ширина змінилася значно (понад 10px)
-          if (Math.abs(newWidth - this.chartWidth) > 10) {
-            this.chartWidth = newWidth;
-            const monthsToShow = this.getMonthsToShow(newWidth);
-            this.updateChart(monthsToShow);
-          }
-        }
-      });
-
-      resizeObserver.observe(container);
-    } else {
-      // Fallback для старих браузерів
-      window.addEventListener('resize', () => {
-        const container = document.getElementById(chartId)?.parentElement;
-        if (!container) return;
-
-        const newWidth = container.clientWidth;
         if (Math.abs(newWidth - this.chartWidth) > 10) {
           this.chartWidth = newWidth;
-          const monthsToShow = this.getMonthsToShow(newWidth);
-          this.updateChart(monthsToShow);
+          this.updateChart();
         }
-      });
-    }
-  },
-
-  updateChart(monthsToShow = null) {
-    if (!this.chart) return;
-
-    // Якщо monthsToShow не передано, визначаємо на основі поточної ширини
-    if (monthsToShow === null) {
-      monthsToShow = this.getMonthsToShow(this.chartWidth);
-    }
-
-    this.chart.data.labels = allMonths.slice(0, monthsToShow);
-    this.chart.data.datasets[0].data = allIncome.slice(0, monthsToShow);
-    this.chart.data.datasets[1].data = allExpenses.slice(0, monthsToShow);
-    this.chart.data.datasets[2].data = allSavings.slice(0, monthsToShow);
-
-    const isWide = this.chartWidth >= 500;
-    this.chart.options = this.getChartOptions(isWide);
-    this.chart.update();
+      }
+    });
+    resizeObserver.observe(container);
   },
 
   updateColors() {
     if (!this.chart) return;
-
-    const isWide = this.chartWidth >= 500;
-    this.chart.options = this.getChartOptions(isWide);
+    this.chart.options = this.getChartOptions();
     this.chart.update();
-  },
-
-  handleResize() {
-    // Ця функція тепер використовує ResizeObserver
-    // Залишаємо для зворотної сумісності
-    const container = this.chart?.canvas?.parentElement;
-    if (container) {
-      const newWidth = container.clientWidth;
-      if (Math.abs(newWidth - this.chartWidth) > 10) {
-        this.chartWidth = newWidth;
-        const monthsToShow = this.getMonthsToShow(newWidth);
-        this.updateChart(monthsToShow);
-      }
-    }
   }
 };
 

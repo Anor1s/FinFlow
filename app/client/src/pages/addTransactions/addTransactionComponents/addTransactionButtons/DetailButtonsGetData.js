@@ -9,6 +9,7 @@ import {
 } from "../../index.js";
 
 function DetailButtonsGetData() {
+
   return {
     amount: AmountButton.getValue?.() || '',
     currency: CurrencyButton.getValue?.() || '',

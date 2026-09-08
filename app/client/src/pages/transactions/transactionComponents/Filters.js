@@ -11,6 +11,11 @@ const Filters = {
         </div>
       </section>
     `;
+  },
+
+  init() {
+    FilterCriteria.init();
+    SortBy.init();
   }
 };
 

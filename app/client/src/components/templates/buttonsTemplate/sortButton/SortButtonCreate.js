@@ -1,5 +1,6 @@
 const SortButtonCreate = {
   buttonStates: new Map(),
+  _isGlobalListenerSetup: false,
 
   render(buttonConfig, buttonData) {
     if (!this.buttonStates.has(buttonConfig.buttonId)) {
@@ -25,63 +26,66 @@ const SortButtonCreate = {
         id="${buttonConfig.buttonId}"
         data-sort-value="${currentButtonData.value}"
       >
-        ${currentButtonData.text} <span>${currentButtonData.icon}</span>
+        <div class="flex justify-between items-center">
+          ${currentButtonData.text} 
+          <span class="opacity-70">${currentButtonData.icon}</span>
+        </div>
       </button>
     `;
   },
 
   getStateIndex(state) {
-    switch(state) {
-      case 'none': return 0;
-      case 'asc': return 1;
-      case 'desc': return 2;
-      default: return 0;
-    }
+    const order = {
+      'none': 0,
+      'asc': 1,
+      'desc': 2
+    };
+    return order[state] ?? 0;
   },
-
 
   toggleState(buttonId) {
     const buttonState = this.buttonStates.get(buttonId);
+    if (!buttonState) return;
+
     const stateOrder = ['none', 'asc', 'desc'];
     const currentIndex = stateOrder.indexOf(buttonState.currentState);
     buttonState.currentState = stateOrder[(currentIndex + 1) % stateOrder.length];
   },
 
-  getValue(buttonId) {
-    if (!this.buttonStates.has(buttonId)) {
-      return { value: '' };
-    }
+  initButtons() {
+    if (this._isGlobalListenerSetup) return;
 
-    const buttonState = this.buttonStates.get(buttonId);
-    const stateIndex = this.getStateIndex(buttonState.currentState);
-    const currentStateKey = buttonState.stateKeys[stateIndex];
-    const currentButtonData = buttonState.states[currentStateKey];
+    document.addEventListener('click', (e) => {
+      const sortButton = e.target.closest('.sort-button');
+      if (!sortButton) return;
 
-    return {
-      value: currentButtonData.value
-    };
+      const buttonId = sortButton.id;
+      if (this.buttonStates.has(buttonId)) {
+        this.toggleState(buttonId);
+
+
+        const buttonState = this.buttonStates.get(buttonId);
+
+
+        const newButtonHtml = this.render({ buttonId }, buttonState.states);
+        sortButton.outerHTML = newButtonHtml;
+
+        if (window.updateTransactionSort) {
+          window.updateTransactionSort();
+        }
+      }
+    });
+
+    this._isGlobalListenerSetup = true;
   },
 
-  initButtons() {
-    requestAnimationFrame(() => {
-      document.addEventListener('click', (e) => {
-        const sortButton = e.target.closest('.sort-button');
-        if (sortButton) {
-          const buttonId = sortButton.id;
-          if (this.buttonStates.has(buttonId)) {
-            this.toggleState(buttonId);
-            const buttonState = this.buttonStates.get(buttonId);
-            const buttonConfig = { buttonId };
-            const newButtonHtml = this.render(buttonConfig, buttonState.states);
-            sortButton.outerHTML = newButtonHtml;
+  getValue(buttonId) {
+    const buttonState = this.buttonStates.get(buttonId);
+    if (!buttonState) return { value: '' };
 
-            if (window.updateTransactionSort) {
-              window.updateTransactionSort();
-            }
-          }
-        }
-      });
-    });
+    const stateIndex = this.getStateIndex(buttonState.currentState);
+    const currentStateKey = buttonState.stateKeys[stateIndex];
+    return { value: buttonState.states[currentStateKey].value };
   }
 };
 

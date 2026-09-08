@@ -1,4 +1,4 @@
-import { AsideMenuNav, AsideOtherNav } from "./Index.js";
+import { AsideMenuNav, AsideOtherNav } from "./index.js";
 
 const Nav = {
   render() {

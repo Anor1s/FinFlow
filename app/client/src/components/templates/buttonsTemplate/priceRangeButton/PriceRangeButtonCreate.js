@@ -56,9 +56,16 @@ const PriceRangeButtonCreate = {
     maxInput.addEventListener('input', validateRange);
   },
 
+  reset(buttonConfig) {
+    const minInput = document.getElementById(buttonConfig.buttonInputMinId);
+    const maxInput = document.getElementById(buttonConfig.buttonInputMaxId);
+    if (minInput) minInput.value = '';
+    if (maxInput) maxInput.value = '';
+  },
+
   getValues(buttonConfig) {
     const min = parseInt(document.getElementById(buttonConfig.buttonInputMinId)?.value) || 0;
-    const max = parseInt(document.getElementById(buttonConfig.buttonInputMaxId)?.value) || 1000;
+    const max = parseInt(document.getElementById(buttonConfig.buttonInputMaxId)?.value) || Infinity;
 
     return {
       min: Math.max(0, min),

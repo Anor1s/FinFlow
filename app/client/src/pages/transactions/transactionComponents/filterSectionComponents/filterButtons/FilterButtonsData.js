@@ -4,7 +4,8 @@ import {
   DateTimeFromButton,
   DateTimeToButton,
   TransactionPlaceButton,
-  PriceRangeButton
+  PriceRangeButton,
+  //CurrencyButton
 } from "../../../index.js";
 import {NoteTextarea} from "../../../../addTransactions/index.js";
 
@@ -17,10 +18,5 @@ const FilterButtonsData = [
   TransactionPlaceButton,
 ];
 
-FilterButtonsData.forEach(component => {
-  if (component.init) {
-    component.init();
-  }
-});
 
 export default FilterButtonsData;

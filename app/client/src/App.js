@@ -1,23 +1,38 @@
-import { initRouter, navigateTo } from './router/Router.js';
+import Router from './router/Router.js';
 import { restoreCSSGradient, restoreTheme } from './components/other/RestoreThemeAndColors.js'
 import Header from './components/Header.js';
 import Aside from './components/aside/Aside.js';
+import AuthService from './services/AuthService.js';
 
-export function initApp() {
+export async function initApp() {
   restoreCSSGradient();
   restoreTheme();
 
+  await AuthService.checkAuth();
+
   renderAppLayout();
-  initRouter();
+  Router.init();
 
   document.addEventListener('click', (e) => {
     if (e.target.matches('[data-link]')) {
       e.preventDefault();
       const href = e.target.getAttribute('href');
-      navigateTo(href);
+      Router.navigateTo(href);
     }
   });
 }
+
+window.addEventListener('load', () => {
+  const preloader = document.getElementById('preloader');
+
+  setTimeout(() => {
+    preloader.classList.add('loader-hidden');
+
+    setTimeout(() => {
+      preloader.remove();
+    }, 500); // 500
+  }, 300); // 300
+});
 
 function renderAppLayout(title = 'FinFlow') {
   const app = document.getElementById('app');

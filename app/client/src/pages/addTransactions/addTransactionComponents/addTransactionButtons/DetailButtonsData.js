@@ -18,14 +18,5 @@ const DetailButtonsData = [
 
 ];
 
-
-const initDetailButtons = () => {
-  DetailButtonsData.forEach(component => {
-    if (component.init) {
-      component.init();
-    }
-  });
-};
-
 export default DetailButtonsData;
-export { initDetailButtons };
+

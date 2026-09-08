@@ -24,7 +24,7 @@ const PasswordInput = {
         >
         </button>
       </div>
-      <div class="text-text-error text-base" id="${inputId}Error"></div>
+      <div class="text-text-accent text-base mt-[8px]" id="${inputId}Error"></div>
     `
   },
 

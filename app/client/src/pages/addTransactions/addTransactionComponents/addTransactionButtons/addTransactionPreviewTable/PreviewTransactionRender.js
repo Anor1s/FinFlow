@@ -12,16 +12,24 @@ const DetailButtonsRender = {
     note: '',
   },
 
-  updatePreview() {
-    this.transactionData = DetailButtonsGetData();
+  getCurrencySymbol(currencyCode) {
+    let displaySymbol = '';
+    switch (currencyCode?.toUpperCase()) {
+      case 'USD': displaySymbol = '$'; break;
+      case 'UAH': displaySymbol = '₴'; break;
+      case 'EUR': displaySymbol = '€'; break;
+      default: displaySymbol = currencyCode || '';
+    }
+    return displaySymbol;
+  },
 
+  updatePreview() {
     const previewElement = document.querySelector('[data-preview-transaction]');
 
-    if (previewElement) {
-      this.updatePreviewElements(previewElement, this.transactionData);
-    } else {
-      console.warn('Preview element not found');
-    }
+    if (!previewElement) return;
+
+    this.transactionData = DetailButtonsGetData();
+    this.updatePreviewElements(previewElement, this.transactionData);
   },
 
   updatePreviewElements(container, data) {
@@ -37,14 +45,15 @@ const DetailButtonsRender = {
 
     categorySection.innerHTML = `
       ${data.category.icon ?
-          `<img 
+      `<img 
+            class="icon"
             src="${data.category.icon}" 
             alt="${data.category} icon"
             width="24"
             height="24"
             loading="lazy"
           />` :  ''
-        }
+    }
       <span class="text-text-tertiary text-base mobile:text-lg laptop:text-xl">
         ${data.category.text}
       </span>
@@ -72,14 +81,19 @@ const DetailButtonsRender = {
     }
 
     if (data.currency) {
+      const currencySymbol = this.getCurrencySymbol(data.currency);
       parts.push(`
-        <span class="text-text-tertiary text-base mobile:text-lg laptop:text-xl">${data.currency}</span>
+        <span class="text-text-tertiary text-base mobile:text-lg laptop:text-xl">
+          ${currencySymbol}
+        </span>
       `);
     }
 
     if (data.amount) {
       parts.push(`
-        <span class="text-text-tertiary text-base mobile:text-lg laptop:text-xl">${data.amount}</span>
+        <span class="text-text-tertiary text-base mobile:text-lg laptop:text-xl">
+          ${data.amount}
+        </span>
       `);
     }
 
@@ -118,9 +132,7 @@ const DetailButtonsRender = {
   },
 
   initPreviewTransaction() {
-    setTimeout(() => {
-      this.updatePreview();
-    }, 100);
+    this.updatePreview();
 
     document.addEventListener('click', (e) => {
       if (e.target.closest('[data-value]') || e.target.closest('[data-button-id]')) {
@@ -129,13 +141,15 @@ const DetailButtonsRender = {
     });
 
     document.addEventListener('input', (e) => {
-      if (e.target.matches('[data-amount], [data-note]')) {
-        setTimeout(() => this.updatePreview(), 50);
-      }
-    });
+      const target = e.target;
 
-    document.addEventListener('change', (e) => {
-      setTimeout(() => this.updatePreview(), 50);
+      if (
+        target.closest('[data-amount]') ||
+        target.closest('[data-note]') ||
+        target.closest('.datetime-input')
+      ) {
+        this.updatePreview();
+      }
     });
   }
 };

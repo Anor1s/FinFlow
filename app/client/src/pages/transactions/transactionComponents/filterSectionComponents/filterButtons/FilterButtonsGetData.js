@@ -5,12 +5,16 @@ import {
   DateTimeToButton,
   TransactionTypeButton,
   TransactionPlaceButton,
+  AppStore
 } from "../../../index.js";
 
 function FilterButtonsGetData() {
+  const currentGlobalCurrency = AppStore.currentCurrency || '';
+
   return {
+    currentCurrency: currentGlobalCurrency,
     priceRangeMin: PriceRangeButton.getValues?.().min || 0,
-    priceRangeMax: PriceRangeButton.getValues?.().max || 1000,
+    priceRangeMax: PriceRangeButton.getValues?.().max || Infinity,
     category: {
       icon: CategoryButton.getInfo().icon || '',
       text: CategoryButton.getInfo?.().text || '',
@@ -19,7 +23,7 @@ function FilterButtonsGetData() {
     dateTimeFrom: DateTimeFromButton.getValues?.() || '',
     dateTimeTo: DateTimeToButton.getValues?.() || '',
     transactionType: TransactionTypeButton.getValue?.() || '',
-    transactionPlace: TransactionPlaceButton.getValue?.() || '',
+    transactionPlace: TransactionPlaceButton.getValue?.()?.trim() || '',
   };
 }
 

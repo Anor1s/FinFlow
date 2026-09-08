@@ -15,6 +15,4 @@ const setCSSGradient = (gradientName, colorFirst, colorSecond) => {
   localStorage.setItem('colorSecond', colorSecond);
 };
 
-
-
 export { setCSSGradient, getCSSVariable };

@@ -1,23 +1,17 @@
-import { SelectButtonCreate } from '../../../../index.js';
-
-const ButtonData = [
-  {  value: 'income', icon: '📥', text: 'Income' },
-  {  value: 'expense', icon: '📤', text: 'Expense' },
-];
+import { TextButtonCreate } from '../../../../index.js';
 
 const ButtonConfig = {
   categoryName: "Transaction Place",
-  buttonId: "filterTransactionPlace",
+  buttonId: "transactionPlace",
 };
-
 
 const TransactionPlaceButton = {
   render() {
-    return SelectButtonCreate.render(ButtonData, ButtonConfig);
+    return TextButtonCreate.render(ButtonConfig);
   },
 
   getValue() {
-    return SelectButtonCreate.getValue(ButtonConfig.buttonId).value;
+    return TextButtonCreate.getValue(ButtonConfig);
   }
 };
 
